@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FlashcardsApp.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FlashcardsApp.Controllers
 {

@@ -1,4 +1,4 @@
-namespace FlashcardsApp
+namespace FlashcardsApp.Models
 {
     public class WeatherForecast
     {
