@@ -5,21 +5,30 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+
 builder.Services.AddControllersWithViews();
+
+string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(MyAllowSpecificOrigins,
+                        policy =>
+                        {
+                            policy.WithOrigins("https://localhost:44447")
+                                .AllowAnyMethod()
+                                .AllowAnyHeader()
+                                .SetIsOriginAllowed(origin => true)
+                                .AllowCredentials()
+                                .Build();
+                        });
+});
+
 
 // Configure Database
 builder.Services.AddDbContext<FlashcardsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer")));
 
 var app = builder.Build();
-
-// Testing purposes
-var options = new DbContextOptionsBuilder<FlashcardsContext>()
-    .UseSqlServer(builder.Configuration.GetConnectionString("sqlserver"))
-    .Options;
-using var db = new FlashcardsContext(options);
-db.Database.EnsureDeleted();
-db.Database.EnsureCreated();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -32,6 +41,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapControllerRoute(
     name: "default",

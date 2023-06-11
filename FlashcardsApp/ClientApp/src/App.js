@@ -18,5 +18,5 @@ export default class App extends Component {
         </Routes>
       </Layout>
     );
-  }
+    }
 }
