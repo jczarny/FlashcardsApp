@@ -17,7 +17,8 @@ namespace FlashcardsApp
        
             var users = modelBuilder.Entity<User>();
             users.Property(b => b.Username).IsRequired().HasMaxLength(25);
-            users.Property(b => b.Password).IsRequired().HasMaxLength(25);
+            users.Property(b => b.PasswordHash).IsRequired();
+            users.Property(b => b.PasswordSalt).IsRequired();
             users.HasIndex(b => b.Username).IsUnique();
             users.HasMany(p => p.OwnerDecks).WithOne(t => t.Creator).OnDelete(DeleteBehavior.SetNull);
             users.HasMany(p => p.Statistics).WithOne(t => t.User).OnDelete(DeleteBehavior.Cascade);
@@ -64,19 +65,22 @@ namespace FlashcardsApp
                 {
                     Id = 1,
                     Username = "Michal15",
-                    Password = "baaaaaa",
+                    PasswordHash = new byte[256],
+                    PasswordSalt = new byte[256],
                 },
                 new User
                 {
                     Id = 2,
                     Username = "Krzychu7",
-                    Password = "lolllol"
+                    PasswordHash = new byte[256],
+                    PasswordSalt = new byte[256],
                 },
                 new User
                 {
                     Id = 3,
                     Username = "admin",
-                    Password = "admin"
+                    PasswordHash = new byte[256],
+                    PasswordSalt = new byte[256],
                 });
 
             modelBuilder.Entity<Statistic>().HasData(

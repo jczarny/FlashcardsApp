@@ -5,7 +5,7 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [isPending, setIsPending] = useState(false);
 
-    const url = "user/login?username=" + username + "&password=" + password;
+    const url = "api/user/login";
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsPending(true);
@@ -14,12 +14,17 @@ export default function Login() {
         fetch(url, {
             method: 'POST',
             mode: 'cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify()
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                })
         }).then(response => response.json())
             .then(
                 data => console.log(data),
-                setIsPending(false);
+                setIsPending(false)
             );
      
     }

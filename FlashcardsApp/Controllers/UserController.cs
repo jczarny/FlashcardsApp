@@ -1,4 +1,6 @@
-﻿using FlashcardsApp.Models;
+﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -10,7 +12,7 @@ using System.Xml;
 namespace FlashcardsApp.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [EnableCors("_myAllowSpecificOrigins")]
     public class UserController : ControllerBase
     {
@@ -19,7 +21,7 @@ namespace FlashcardsApp.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public IEnumerable<User> Get()
         {
             //var query = _context.Cards.Where(s => s.DeckId == 1);
@@ -28,20 +30,22 @@ namespace FlashcardsApp.Controllers
             {
                 Id = 0,
                 Username = "temporary user",
-                Password = "pwd"
+                PasswordHash = new byte[256],
+                PasswordSalt = new byte[256]
             })
             .ToArray();
         }
 
-        [HttpPost("login")]
-        public IActionResult Post(string? username, string? password)
+        [HttpPost("login"), Authorize]
+        public IActionResult Post(UserDto user)
         {
-            var l = _context.Users
-                .Where(o => o.Username == username && o.Password == password).ToList();
-            if (l.Count() == 1)
-                return Ok(1);
-            else
-                return BadRequest(0);
+            //var l = _context.Users
+            //    .Where(o => o.Username == user.Username && o.PasswordHash == user.Password).ToList();
+            //if (l.Count() == 1)
+            //    return Ok(1);
+            //else
+            //    return BadRequest(0);
+            return Ok(1);
         }
     }
 }
