@@ -1,14 +1,19 @@
 import Login from "./components/Login";
 import Home from "./components/Home";
+import Register from "./components/Register";
 
 const AppRoutes = [
   {
-    index: true,
-    element: <Home />
+      index: true,
+      element: <Home />
   },
   {
-    path: '/login',
-    element: <Login />
+      path: '/login',
+      element: <Login />
+  },
+  {
+      path: '/register',
+      element: <Register />
   }
 ];
 
