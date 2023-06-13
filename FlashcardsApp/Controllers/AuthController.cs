@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using FlashcardsApp.Dtos;
 using FlashcardsApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +19,7 @@ namespace FlashcardsApp.Controllers
     {
         private readonly FlashcardsContext _context;
         private readonly IConfiguration _configuration;
+
         // Get db context and project config
         public AuthController(FlashcardsContext context, IConfiguration configuration)
         {
@@ -64,7 +66,7 @@ namespace FlashcardsApp.Controllers
             var userList = _context.Users
                 .Where(o => o.Username == request.Username).ToList();
             if (userList.Count() != 1)
-                return BadRequest("User not found");
+                return Unauthorized("User not found");
 
             User user = userList[0];
             bool isVerified = VerifyHashPassword(request.Password, user.PasswordHash, user.PasswordSalt);
@@ -83,7 +85,7 @@ namespace FlashcardsApp.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return Ok( new { AccessToken = token });
+                    return Ok( new { AccessToken = token, UserId = user.Id });
                 } catch (Exception ex)
                 {
                     return BadRequest(ex.Message);
@@ -93,10 +95,38 @@ namespace FlashcardsApp.Controllers
                 return BadRequest("Invalid password");
 
         }
+        
+        // Logout, clear user's refresh token.
+        [HttpPost("logout")]
+        public async Task<ActionResult<User>> Logout()
+        {
+            string userId = Request.Headers["userId"].ToString();
 
+            var userList = _context.Users
+                .Where(o => o.Id == Int32.Parse(userId)).ToList();
+            if(userList.Count != 1) {
+                return BadRequest("Something went wrong and we couldnt find such user");
+            }
+            var user = userList[0];
+            User refreshedUser = user;
+            refreshedUser.RefreshToken = null;
+            _context.Entry(user).CurrentValues.SetValues(refreshedUser);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        
         // Refresh refresh token
         // TODO: add client id&secret in order to filter db while checking refresh token
-        [HttpPost("refresh-token")]
+        [HttpPost("refresh-token"), Authorize]
         public async Task<ActionResult<string>> RefreshToken()
         {
             var currRefreshToken = Request.Cookies["refreshToken"];
@@ -123,7 +153,7 @@ namespace FlashcardsApp.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return Ok(accessToken);
+                    return Ok(new { AccessToken = accessToken });
 
                 } catch(Exception ex)
                 {
@@ -150,7 +180,7 @@ namespace FlashcardsApp.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: creds
                 );
 
@@ -164,7 +194,7 @@ namespace FlashcardsApp.Controllers
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddMinutes(10)
+                Expires = DateTime.Now.AddMinutes(25)
             };
             return refreshToken;
         }

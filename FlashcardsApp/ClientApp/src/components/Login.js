@@ -1,37 +1,38 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { AuthContext } from '../contexts/AuthContext';
 
 export default function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const { userId, setUserId, accessToken, setAccessToken } = useContext(AuthContext)
+    const [username, setUsername] = useState('faewafa');
+    const [password, setPassword] = useState('pwd1111');
     const [isPending, setIsPending] = useState(false);
+    const navigate = useNavigate();
 
-    const url = "api/user/login";
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsPending(true);
 
-        const accData = { username, password };
-        fetch(url, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password,
-                })
-        }).then(response => response.json())
-            .then(
-                data => console.log(data),
+        axios.post('api/auth/login', {
+            username: username,
+            password: password
+        })
+            .then(res => {
+                setAccessToken(res.data.accessToken)
+                setUserId(res.data.userId)
                 setIsPending(false)
-            );
-     
+                navigate('/')
+            })
+            .catch(err => {
+                console.log(err.response.status)
+                setIsPending(false)
+            })
     }
 
     return (
         <>
-            <h2> Log in </h2>
+            <h2> Login </h2>
             <form onSubmit = { handleSubmit }>
                 <label>username: </label>
                 <input
