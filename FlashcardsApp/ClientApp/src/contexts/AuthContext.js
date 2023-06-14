@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 export default function AuthContextProvider({ children }) {
     const [userId, setUserId] = useState('')
     const [accessToken, setAccessToken] = useState('')
+
     const config = {
         headers: {
             userId: userId,

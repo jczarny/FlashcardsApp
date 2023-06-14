@@ -8,6 +8,7 @@ export default function Login() {
     const [username, setUsername] = useState('faewafa');
     const [password, setPassword] = useState('pwd1111');
     const [isPending, setIsPending] = useState(false);
+    const [validCred, setValidCred] = useState(true);
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -27,31 +28,50 @@ export default function Login() {
             .catch(err => {
                 console.log(err.response.status)
                 setIsPending(false)
+                setValidCred(false)
             })
     }
 
     return (
         <>
-            <h2> Login </h2>
-            <form onSubmit = { handleSubmit }>
-                <label>username: </label>
-                <input
-                    type="text"
-                    required
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value) }
-                />
-                <label>password: </label>
-                <input
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                { !isPending && <button>Confirm</button> }
-                { isPending && <button disabled> Logging in </button> }
-            </form>
-            <Link to="../register">Sign up</Link>
+            <div className="m-3 p-5 w-50 mx-auto border">
+
+                {!validCred &&
+                    <div className="p-1 bg-danger border border-primary-subtle rounded-3">
+                        <p className="text-center fw-bold"> Invalid credentials! </p>
+                    </div>}
+
+                <p className="display-4 text-center">Login</p>
+
+                <form onSubmit={handleSubmit}>
+                    <div className="form-outline mb-4">
+                        <label className="form-label" htmlFor="form2Example1">Username</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            required
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
+
+                    <div className="form-outline mb-4">
+                        <label className="form-label" htmlFor="form2Example2">Password</label>
+                        <input
+                            type="password"
+                            className="form-control"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    {!isPending &&
+                        <button type="button" onClick={handleSubmit} className="btn btn-primary btn-block mb-4">Sign in</button>}
+                    {isPending &&
+                        <button disabled type="button" onClick={handleSubmit} className="btn btn-primary btn-block mb-4">Sign in</button>}
+                    <Link className="ms-2" to="../register">Sign up</Link>
+                </form>
+            </div>
         </>
     )
 }
