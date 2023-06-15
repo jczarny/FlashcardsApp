@@ -1,6 +1,7 @@
 import Login from "./components/Login";
 import Home from "./components/Home";
 import Register from "./components/Register";
+import Learn from "./components/Learn";
 
 const AppRoutes = [
   {
@@ -14,6 +15,10 @@ const AppRoutes = [
   {
       path: '/register',
       element: <Register />
+    },
+  {
+      path: '/learn/:id',
+      element: <Learn />
   }
 ];
 

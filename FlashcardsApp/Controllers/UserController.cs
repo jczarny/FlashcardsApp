@@ -3,7 +3,10 @@ using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Data;
+using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -17,34 +20,47 @@ namespace FlashcardsApp.Controllers
     public class UserController : ControllerBase
     {
         private readonly FlashcardsContext _context;
-        public UserController(FlashcardsContext context) {
+        private readonly string _connectionString;
+        private readonly IConfiguration _configuration;
+        public UserController(FlashcardsContext context, IConfiguration configuration) {
             _context = context;
+            _configuration = configuration;
+            _connectionString = configuration.GetConnectionString("SQLServer")!;
         }
 
-        [HttpGet, Authorize]
-        public IEnumerable<User> Get()
+        [HttpGet("owned-decks"), Authorize]
+        public async Task<ActionResult<User>> GetOwnedDecks(string id)
         {
-            //var query = _context.Cards.Where(s => s.DeckId == 1);
-
-            return Enumerable.Range(1, 5).Select(index => new User
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                Id = 0,
-                Username = "temporary user",
-                PasswordHash = new byte[256],
-                PasswordSalt = new byte[256]
-            })
-            .ToArray();
+                SqlCommand command = new SqlCommand(
+                    "select * from UserDecks as ud join Decks as d on ud.DeckId = d.Id where userId=" + id, 
+                    connection);
+
+                await connection.OpenAsync();
+
+                SqlDataReader reader = command.ExecuteReader();
+                
+                List<DeckDto> decks = new List<DeckDto>();
+                while (reader.Read())
+                {
+                    decks.Add(new DeckDto
+                    {
+                        Id = reader.GetInt32("DeckId"),
+                        Title = reader.GetString("Title"),
+                        Description = reader.GetString("Description")
+                    });
+                }
+
+                string json = JsonSerializer.Serialize(decks);
+                reader.Close();
+                return Ok(json);
+            }
         }
 
         [HttpPost("login"), Authorize]
         public IActionResult Post(UserDto user)
         {
-            //var l = _context.Users
-            //    .Where(o => o.Username == user.Username && o.PasswordHash == user.Password).ToList();
-            //if (l.Count() == 1)
-            //    return Ok(1);
-            //else
-            //    return BadRequest(0);
             return Ok(1);
         }
     }

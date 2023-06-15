@@ -21,9 +21,7 @@ export default function AuthContextProvider({ children }) {
                 return 1;
             })
             .catch(err => {
-                if (err.response.status === 401) {
-                    return 0;
-                }
+                return 0;
             })
     }
 

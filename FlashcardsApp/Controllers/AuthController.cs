@@ -92,7 +92,7 @@ namespace FlashcardsApp.Controllers
                 }
             }
             else
-                return BadRequest("Invalid password");
+                return Unauthorized("Invalid password");
 
         }
         
