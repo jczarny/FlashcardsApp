@@ -47,6 +47,7 @@ namespace FlashcardsApp.Controllers
                     decks.Add(new DeckDto
                     {
                         Id = reader.GetInt32("DeckId"),
+                        CreatorId = reader.GetInt32("CreatorId"),
                         Title = reader.GetString("Title"),
                         Description = reader.GetString("Description")
                     });

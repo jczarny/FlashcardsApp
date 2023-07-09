@@ -5,7 +5,9 @@ import './NavMenu.css';
 import { AuthContext } from '../contexts/AuthContext';
 
 export class NavMenu extends Component {
-  static displayName = NavMenu.name;
+
+    static displayName = NavMenu.name;
+    static contextType = AuthContext;
 
   constructor (props) {
     super(props);
@@ -22,7 +24,8 @@ export class NavMenu extends Component {
     });
   }
 
-  render() {
+    render() {
+        console.log(this.context);
     return (
       <header>
         <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
@@ -30,9 +33,26 @@ export class NavMenu extends Component {
           <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
           <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
             <ul className="navbar-nav flex-grow">
-              <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/">Login</NavLink>
-              </NavItem>
+                {
+                    this.context.userId && 
+                    <>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/browse">Browse Decks</NavLink>
+                        </NavItem>     
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/create">Create New</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/logout">Logout</NavLink>
+                        </NavItem>
+                    </>
+                }
+                {
+                    !this.context.userId &&
+                    <NavItem>
+                        <NavLink tag={Link} className="text-dark" to="/">Login</NavLink>
+                    </NavItem>
+                }
             </ul>
           </Collapse>
         </Navbar>

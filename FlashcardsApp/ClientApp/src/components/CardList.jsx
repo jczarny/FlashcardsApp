@@ -1,0 +1,32 @@
+﻿import React, { useState, useContext, useEffect } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
+import CardItem from './CardItem';
+
+export default function CardList({ title, cards, HandleDelete }) {
+    const { config } = useContext(AuthContext)
+    const [cards, setCards] = useState([])
+
+    return (
+        <>
+            <h3> {title} </h3>
+            <table className="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Front</th>
+                        <th scope="col">Reverse</th>
+                        <th scope="col"> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        cards.map((card) =>
+                            <CardItem key={card.No} Id={card.Id} No={card.No} Front={card.Front}
+                                Reverse={card.Reverse} HandleDelete={HandleDelete} />
+                        )
+                    }
+                </tbody>
+            </table>
+        </>
+    )
+}

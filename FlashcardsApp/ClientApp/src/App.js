@@ -8,15 +8,15 @@ import './custom.css';
 export default function App() {
 
     return (
-      <Layout>
-        <AuthContextProvider>
-          <Routes>
-            {AppRoutes.map((route, index) => {
-              const { element, ...rest } = route;
-              return <Route key={index} {...rest} element={element} />;
-            })}
-          </Routes>
-        </AuthContextProvider>
-      </Layout>
+      <AuthContextProvider>
+          <Layout>
+              <Routes>
+                {AppRoutes.map((route, index) => {
+                  const { element, ...rest } = route;
+                  return <Route key={index} {...rest} element={element} />;
+                })}
+              </Routes>
+          </Layout>
+      </AuthContextProvider>
     )
 }
