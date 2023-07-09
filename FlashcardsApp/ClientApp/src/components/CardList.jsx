@@ -2,13 +2,13 @@
 import { AuthContext } from '../contexts/AuthContext';
 import CardItem from './CardItem';
 
-export default function CardList({ title, cards, HandleDelete }) {
-    const { config } = useContext(AuthContext)
-    const [cards, setCards] = useState([])
+export default function CardList({ title, cards, HandleDelete, deleteMsg }) {
 
     return (
         <>
             <h3> {title} </h3>
+            {deleteMsg
+                && <div>{deleteMsg}</div>}
             <table className="table table-striped">
                 <thead>
                     <tr>

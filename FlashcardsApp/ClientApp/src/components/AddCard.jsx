@@ -1,14 +1,11 @@
 ﻿import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
-import CardItem from './CardItem';
 
-export default function AddCard({ deckId }) {
+export default function AddCard({ deckId, handleAdd }) {
     const CARD_REGEX = new RegExp('^[a-zA-Z0-9]([a-zA-Z0-9 ]){1,32}[a-zA-Z0-9]$');
     const { config } = useContext(AuthContext)
 
-    const [addedCards, setAddedCards] = useState([])
-    
     const [front, setFront] = useState('');
     const [validFront, setValidFront] = useState(false);
     const [frontFocus, setFrontFocus] = useState(false);
@@ -61,13 +58,13 @@ export default function AddCard({ deckId }) {
                 Description: description
             }, config)
                 .then(res => {
-                    setAddedCards(oldCards => [...oldCards, {
+                    const newCard = {
                         Id: res.data,
                         Front: front,
                         Reverse: reverse,
-                        Description: description,
-                        No: oldCards.length
-                    }])
+                        Description: description
+                        }
+                    handleAdd(newCard)
                     setFront('')
                     setReverse('')
                     setDescription('')
@@ -75,24 +72,10 @@ export default function AddCard({ deckId }) {
                     setIsPending(false)
                 })
                 .catch(err => {
-                    setOutputMsg(err.response.data)
+                    setOutputMsg(err)
                     setIsPending(false)
                 })
         }
-    }
-
-    const handleDelete = id => {
-        axios.delete('api/deck/card?id=' + id, config)
-            .then(res => {
-                setOutputMsg('Card deleted')
-            })
-            .catch(err => {
-                setOutputMsg(err.response.data)
-                setIsPending(false)
-            })
-
-        setAddedCards((oldCards) => 
-            oldCards.filter((card) => card.Id !== id))
     }
 
     return (
@@ -157,29 +140,13 @@ export default function AddCard({ deckId }) {
                         </div>
                     }
                 </div>
-                <button type="button" onClick={handleSubmit}> Add Card </button>
+                {!isPending &&
+                    <button type="button" onClick={handleSubmit}> Add Card </button>}
+                {isPending &&
+                    <button type="button" disabled onClick={handleSubmit}> Adding... </button>}
                 {outputMsg && <div>{outputMsg}</div> }
             </form>
 
-            <h3> Added cards </h3>
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Front</th>
-                        <th scope="col">Reverse</th>
-                        <th scope="col"> </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        addedCards.map((card) =>
-                            <CardItem key={card.No} Id={card.Id} No={card.No} Front={card.Front}
-                                Reverse={card.Reverse} HandleDelete={handleDelete} />
-                        )
-                    }
-                </tbody>
-            </table>
         </>
     )
 }

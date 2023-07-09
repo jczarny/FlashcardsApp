@@ -45,7 +45,7 @@ namespace FlashcardsApp.Controllers
         }
 
         [HttpGet, Authorize]
-        public async Task<ActionResult<Deck>> Get(string deckId)
+        public async Task<ActionResult<Deck>> GetDeck(string deckId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -63,6 +63,23 @@ namespace FlashcardsApp.Controllers
                     Title = reader.GetString("Title"),
                     Description = reader.GetString("Description")
                 };
+                reader.Close();
+
+                SqlCommand cmd = new SqlCommand(
+                    "select * from cards where Deckid=" + deckId, connection);
+
+                reader = cmd.ExecuteReader();
+
+                while(reader.Read()) {
+                    CardDto card = new CardDto
+                    {
+                        Id = reader.GetInt32("Id"),
+                        Front = reader.GetString("Front"),
+                        Reverse = reader.GetString("Reverse"),
+                        Description = reader.GetString("Description")
+                    };
+                    deck.CardDtos.Add(card);
+                }
                 string json = JsonSerializer.Serialize(deck);
                 reader.Close();
                 return Ok(json);
