@@ -46,7 +46,7 @@ export default function AddCard({ deckId, handleAdd }) {
             setOutputMsg('Invalid Reverse')
         }
         else if (!validDescription) {
-            setOutputMsg('Description is too long!')
+            setOutputMsg('Invalid Description!')
         }
         else {
             setIsPending(true);

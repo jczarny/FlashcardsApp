@@ -13,6 +13,9 @@ export default function EditDeck() {
     const [addedCards, setAddedCards] = useState([])
     const [allCards, setAllCards] = useState([])
 
+    const categories = {ALL: 'all', NEW: 'new'}
+    const [chosenCategory, setChosenCategory] = useState(categories.ALL)
+
     const { id } = useParams()
     const navigate = useNavigate();
 
@@ -28,8 +31,14 @@ export default function EditDeck() {
             axios.get(`api/deck?deckId=${id}`, config)
                 .then(res => {
                     setDeck(res.data)
-                    console.log(res.data)
                     setAllCards(res.data.CardDtos)
+                    setAllCards(cards =>
+                        cards.map((card,index) => ({
+                            ...card,
+                            No: index
+                        }))
+                    )
+                    console.log(allCards)
                 })
                 .catch(err => {
                     if (err.response.status === 401) {
@@ -53,10 +62,20 @@ export default function EditDeck() {
 
         setAddedCards((oldCards) =>
             oldCards.filter((card) => card.Id !== id))
+        setAllCards((oldCards) =>
+            oldCards.filter((card) => card.Id !== id))
     }
 
     const handleAdd = card => {
         setAddedCards(oldCards => [...oldCards, { ...card, No: oldCards.length }])
+        setAllCards(oldCards => [...oldCards, { ...card, No: oldCards.length }])
+    }
+
+    const handleCardList = decision => {
+        if (decision === categories.NEW && chosenCategory === categories.ALL)
+            setChosenCategory(categories.NEW)
+        else if (decision === categories.ALL && chosenCategory === categories.NEW)
+            setChosenCategory(categories.ALL)
     }
 
     return (
@@ -65,10 +84,17 @@ export default function EditDeck() {
             
             <AddCard deckId={id} handleAdd={handleAdd} />
 
-            <button>Recently Added </button>
+            <button onClick={() => handleCardList(categories.NEW) }> Recently Added </button>
+            <button onClick={() => handleCardList(categories.ALL)}> All Cards </button>
 
-            <CardList title="Added cards" cards={addedCards} HandleDelete={handleDelete} deleteMsg={deleteMsg} />
-            <CardList title="All cards" cards={allCards} HandleDelete={handleDelete} deleteMsg={deleteMsg } />
+            {
+                chosenCategory === categories.NEW &&
+                <CardList title="New cards" cards={addedCards} HandleDelete={handleDelete} deleteMsg={deleteMsg} />
+            }
+            {
+                chosenCategory === categories.ALL &&
+                <CardList title="All cards" cards={allCards} HandleDelete={handleDelete} deleteMsg={deleteMsg} />
+            }
         </>
     )
 }
