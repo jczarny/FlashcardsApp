@@ -1,7 +1,7 @@
 ﻿import React, { useState, useContext, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Register() {
     const USERNAME_REGEX = new RegExp('^[a-zA-Z0-9]([a-zA-Z0-9]){3,18}[a-zA-Z0-9]$');

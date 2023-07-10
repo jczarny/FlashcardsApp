@@ -1,10 +1,11 @@
-import Login from "./components/Login";
+import Login from "./components/Login/Login";
 import Home from "./components/Home";
-import Register from "./components/Register";
+import Register from "./components/Login/Register";
 import Learn from "./components/Learn";
-import CreateDeck from "./components/CreateDeck";
-import EditDeck from "./components/EditDeck";
-import BrowseDecks from "./components/BrowseDecks";
+import CreateDeck from "./components/Deck/CreateDeck";
+import EditDeck from "./components/Deck/EditDeck";
+import BrowseDecks from "./components/Deck/BrowseDecks";
+import Logout from "./components/Login/Logout";
 
 const AppRoutes = [
   {
@@ -34,6 +35,10 @@ const AppRoutes = [
   {
       path: '/browse',
       element: <BrowseDecks />
+  },
+  {
+      path: '/logout',
+      element: <Logout />
   }
 ];
 

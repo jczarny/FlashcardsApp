@@ -1,10 +1,10 @@
 ﻿import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import AddCard from "./AddCard";
-import CardList from './CardList';
+import AddCard from "../Card/AddCard";
+import CardList from '../Card/CardList';
 
 export default function EditDeck() {
     const { userId, getAuthentication, config, logout } = useContext(AuthContext)
@@ -122,6 +122,7 @@ export default function EditDeck() {
             <button onClick={() => handleDeleteDeck()}> Delete deck </button>
 
             {infoMsg && <div>{infoMsg}</div>}
+
 
             {
                 deck.CreatorId === userId && 

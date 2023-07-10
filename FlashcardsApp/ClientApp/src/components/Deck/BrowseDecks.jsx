@@ -1,10 +1,10 @@
 ﻿import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 import axios from 'axios';
 import DeckItem from "./DeckItem";
 
-export default function CreateDeck() {
+export default function BrowseDecks() {
     const { userId, getAuthentication, config, logout } = useContext(AuthContext)
     const [publicDecks, setPublicDecks] = useState([])
     const [ownedDecksIds, setOwnedDecksIds] = useState([])

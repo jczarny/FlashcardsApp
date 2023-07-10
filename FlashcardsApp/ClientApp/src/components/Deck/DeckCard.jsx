@@ -1,5 +1,5 @@
 ﻿import React, { useState, useContext } from 'react';
-import { AuthContext } from '../contexts/AuthContext';
+import { AuthContext } from '../../contexts/AuthContext';
 
 export default function DeckCard({ title, description, id, handleLearn, handleEdit }) {
     const { userId } = useContext(AuthContext)

@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import DeckCard from './DeckCard';
+import DeckCard from './Deck/DeckCard';
 
 export default function Home() {
     const { userId, setUserId, accessToken, setAccessToken, getAuthentication, config, logout } = useContext(AuthContext)
