@@ -38,8 +38,8 @@ namespace FlashcardsApp
             decks.Property(b => b.Description).HasMaxLength(500);
             decks.Property(b => b.IsPrivate).IsRequired();
             decks.HasMany(p => p.Cards).WithOne(t => t.Deck).OnDelete(DeleteBehavior.Cascade);
-            decks.HasMany(p => p.UserDecks).WithOne(t => t.Deck).OnDelete(DeleteBehavior.NoAction);
-            decks.HasMany(p => p.RevisionLogs).WithOne(t => t.Deck).OnDelete(DeleteBehavior.NoAction);
+            decks.HasMany(p => p.UserDecks).WithOne(t => t.Deck).OnDelete(DeleteBehavior.Cascade);
+            decks.HasMany(p => p.RevisionLogs).WithOne(t => t.Deck).OnDelete(DeleteBehavior.Cascade);
 
             var cards = modelBuilder.Entity<Card>();
             cards.HasMany(p => p.RevisionLogs).WithOne(t => t.Card).OnDelete(DeleteBehavior.Cascade);

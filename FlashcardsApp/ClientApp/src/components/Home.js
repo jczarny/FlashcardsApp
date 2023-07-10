@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { AuthContext } from '../contexts/AuthContext';
-import DeckItem from './DeckItem';
+import DeckCard from './DeckCard';
 
 export default function Home() {
     const { userId, setUserId, accessToken, setAccessToken, getAuthentication, config, logout } = useContext(AuthContext)
@@ -53,7 +53,7 @@ return (
                 <div className="row row-cols-2">
                     {
                         decks.map((deck) =>
-                            <DeckItem key={deck.Id} title={deck.Title} creatorId={deck.CreatorId}
+                            <DeckCard key={deck.Id} title={deck.Title} creatorId={deck.CreatorId}
                                 description={deck.Description} id={deck.Id}
                                 handleLearn={handleLearn} handleEdit={handleEdit} />
                         )

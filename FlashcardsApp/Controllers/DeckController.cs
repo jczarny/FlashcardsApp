@@ -28,7 +28,7 @@ namespace FlashcardsApp.Controllers
         }
 
         [HttpPost("create"), Authorize]
-        public async Task<ActionResult<Deck>> Create(NewDeckDto deck)
+        public async Task<ActionResult<DeckDto>> Create(NewDeckDto deck)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -45,7 +45,7 @@ namespace FlashcardsApp.Controllers
         }
 
         [HttpGet, Authorize]
-        public async Task<ActionResult<Deck>> GetDeck(string deckId)
+        public async Task<ActionResult<DeckDto>> GetDeck(string deckId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -61,7 +61,8 @@ namespace FlashcardsApp.Controllers
                     Id = reader.GetInt32("Id"),
                     CreatorId = reader.GetInt32("CreatorId"),
                     Title = reader.GetString("Title"),
-                    Description = reader.GetString("Description")
+                    Description = reader.GetString("Description"),
+                    isPrivate = reader.GetBoolean("isPrivate")
                 };
                 reader.Close();
 
@@ -86,8 +87,36 @@ namespace FlashcardsApp.Controllers
             }
         }
 
+        [HttpGet("getPublic"), Authorize]
+        public async Task<ActionResult<DeckDto>> GetPublicDecks()
+        {
+            List<DeckDto> decks = new List<DeckDto>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand command = new SqlCommand("select * from Decks d join Users u on d.CreatorId = u.Id where d.isPrivate=0", connection);
+                await connection.OpenAsync();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    decks.Add(new DeckDto
+                    {
+                        Id = reader.GetInt32("Id"),
+                        CreatorId = reader.GetInt32("CreatorId"),
+                        CreatorName = reader.GetString("Username"),
+                        Title = reader.GetString("Title"),
+                        Description = reader.GetString("Description")
+                    });
+                }
+
+                string json = JsonSerializer.Serialize(decks);
+                reader.Close();
+                return Ok(json);
+            }
+        }
+
         [HttpPost("addcard"), Authorize]
-        public async Task<ActionResult<Deck>> AddCard(CardDto card)
+        public async Task<ActionResult<DeckDto>> AddCard(CardDto card)
         {
             string json = "";
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -111,11 +140,37 @@ namespace FlashcardsApp.Controllers
         }
 
         [HttpDelete("card"), Authorize]
-        public async Task<ActionResult<Deck>> DeleteCard(string id)
+        public async Task<ActionResult<DeckDto>> DeleteCard(string id)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 SqlCommand cmd = new SqlCommand($"delete from cards where id = {Int32.Parse(id)}", connection);
+                await connection.OpenAsync();
+                cmd.ExecuteReader();
+
+                return Ok();
+            }
+        }
+
+        [HttpDelete, Authorize]
+        public async Task<ActionResult<DeckDto>> DeleteDeck(string id)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand($"delete from decks where id = {Int32.Parse(id)}", connection);
+                await connection.OpenAsync();
+                cmd.ExecuteReader();
+
+                return Ok();
+            }
+        }
+
+        [HttpPatch("publish"), Authorize]
+        public async Task<ActionResult<DeckDto>> Publish(string id)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("update decks set isPrivate=0 where Id=" + id, connection);
                 await connection.OpenAsync();
                 cmd.ExecuteReader();
 

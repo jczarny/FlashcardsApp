@@ -4,6 +4,7 @@ import Register from "./components/Register";
 import Learn from "./components/Learn";
 import CreateDeck from "./components/CreateDeck";
 import EditDeck from "./components/EditDeck";
+import BrowseDecks from "./components/BrowseDecks";
 
 const AppRoutes = [
   {
@@ -29,6 +30,10 @@ const AppRoutes = [
   {
       path: '/edit/:id',
       element: <EditDeck />
+  },
+  {
+      path: '/browse',
+      element: <BrowseDecks />
   }
 ];
 

@@ -20,6 +20,7 @@ export default function EditDeck() {
     const navigate = useNavigate();
 
     const [deleteMsg, setDeleteMsg] = useState('');
+    const [infoMsg, setInfoMsg] = useState('');
 
     useEffect(() => {
         if (!userId) {
@@ -51,7 +52,7 @@ export default function EditDeck() {
         }
     }, [])
 
-    const handleDelete = id => {
+    const handleDeleteCard = id => {
         axios.delete('api/deck/card?id=' + id, config)
             .then(res => {
                 setDeleteMsg('Card successfully deleted')
@@ -78,10 +79,42 @@ export default function EditDeck() {
             setChosenCategory(categories.ALL)
     }
 
+    const handlePublish = () => {
+        axios.patch('api/deck/publish?id=' + deck.Id, {}, config)
+            .then(res => {
+                setInfoMsg('Deck published!')
+                setDeck(oldDeck => ({ ...oldDeck, isPrivate: false }))
+            })
+            .catch(err => {
+                setDeleteMsg(err.response.data)
+            })
+    }
+
+    const handleDeleteDeck = () => {
+        axios.delete('api/deck?id=' + id, config)
+            .then(res => {
+                setDeleteMsg('Deck successfully deleted')
+                navigate('/');
+            })
+            .catch(err => {
+                setDeleteMsg(err.response.data)
+            })
+    }
+
     return (
         <>
             <h1>{deck.Title}</h1>
-            
+            {
+                deck.isPrivate &&
+                <button onClick={() => handlePublish()}> Make public </button>
+            }
+            {
+                !deck.isPrivate &&
+                <button disabled> Make public </button>
+            }
+            <button onClick={() => handleDeleteDeck()}> Delete deck </button>
+
+            {infoMsg && <div>{infoMsg}</div> }
             <AddCard deckId={id} handleAdd={handleAdd} />
 
             <button onClick={() => handleCardList(categories.NEW) }> Recently Added </button>
@@ -89,11 +122,11 @@ export default function EditDeck() {
 
             {
                 chosenCategory === categories.NEW &&
-                <CardList title="New cards" cards={addedCards} HandleDelete={handleDelete} deleteMsg={deleteMsg} />
+                <CardList title="New cards" cards={addedCards} HandleDelete={handleDeleteCard} deleteMsg={deleteMsg} />
             }
             {
                 chosenCategory === categories.ALL &&
-                <CardList title="All cards" cards={allCards} HandleDelete={handleDelete} deleteMsg={deleteMsg} />
+                <CardList title="All cards" cards={allCards} HandleDelete={handleDeleteCard} deleteMsg={deleteMsg} />
             }
         </>
     )
