@@ -155,9 +155,16 @@ namespace FlashcardsApp.Controllers
         [HttpDelete, Authorize]
         public async Task<ActionResult<DeckDto>> DeleteDeck(string id)
         {
+            string userId = Request.Headers["userId"].ToString();
+
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                SqlCommand cmd = new SqlCommand($"delete from decks where id = {Int32.Parse(id)}", connection);
+
+                SqlCommand cmd = new SqlCommand("spDeck_Delete", connection);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.Add(new SqlParameter("@DeckId", id));
+                cmd.Parameters.Add(new SqlParameter("@UserId", userId));
+
                 await connection.OpenAsync();
                 cmd.ExecuteReader();
 
