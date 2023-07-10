@@ -6,7 +6,8 @@ import DeckItem from "./DeckItem";
 
 export default function CreateDeck() {
     const { userId, getAuthentication, config, logout } = useContext(AuthContext)
-    const [decks, setDecks] = useState([])
+    const [publicDecks, setPublicDecks] = useState([])
+    const [ownedDecksIds, setOwnedDecksIds] = useState([])
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -18,13 +19,27 @@ export default function CreateDeck() {
         else {
             axios.get(`api/deck/getPublic`, config)
                 .then(res => {
-                    setDecks(res.data)
-                    setDecks(decks =>
+                    setPublicDecks(res.data)
+                    setPublicDecks(decks =>
                         decks.map((deck, index) => ({
                             ...deck,
                             No: index
-                        }))
-                    )
+                        })))
+                })
+                .catch(err => {
+                    if (err.response.status === 401) {
+                        console.log('Not authorised')
+                        logout()
+                    }
+                    else if (err.response.status === 404)
+                        console.log('Not found');
+                })
+
+            axios.get(`api/user/owned-decks?id=${userId}`, config)
+                .then(res => {
+                    setOwnedDecksIds(res.data)
+                    setOwnedDecksIds(decks =>
+                        decks.map(deck => deck.Id))
                 })
                 .catch(err => {
                     if (err.response.status === 401) {
@@ -36,6 +51,21 @@ export default function CreateDeck() {
                 })
         }
     }, [])
+
+    const handleAcquire = deckId => {
+        axios.post(`api/user/acquire?id=` + deckId, {}, config)
+            .then(res => {
+                setOwnedDecksIds(oldIds => [...oldIds, deckId])
+            })
+            .catch(err => {
+                if (err.response.status === 401) {
+                    console.log('Unauthorized')
+                    logout()
+                }
+                else if (err.response.status === 404)
+                    console.log('Not found');
+            })
+    }
 
     return (
         <>
@@ -52,9 +82,9 @@ export default function CreateDeck() {
                     </thead>
                     <tbody>
                         {
-                            decks.map((deck) =>
-                                <DeckItem key={deck.Id} No={deck.No} Author={deck.CreatorName} Title={deck.Title}
-                                    Description={deck.Description} />
+                            publicDecks.map((deck) =>
+                                <DeckItem key={deck.Id} Id={deck.Id} No={deck.No} Author={deck.CreatorName} Title={deck.Title}
+                                    Description={deck.Description} ownedDecks={ownedDecksIds} handleAcquire={handleAcquire} />
                             )
                         }
                     </tbody>

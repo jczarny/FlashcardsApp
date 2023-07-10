@@ -10,6 +10,8 @@ export default function EditDeck() {
     const { userId, getAuthentication, config, logout } = useContext(AuthContext)
     const [deck, setDeck] = useState('')
 
+    const [isOwner, setIsOwner] = useState('')
+
     const [addedCards, setAddedCards] = useState([])
     const [allCards, setAllCards] = useState([])
 
@@ -39,7 +41,8 @@ export default function EditDeck() {
                             No: index
                         }))
                     )
-                    console.log(allCards)
+                    if (res.data.CreatorId === userId)
+                        setIsOwner(' (Owner) ')
                 })
                 .catch(err => {
                     if (err.response.status === 401) {
@@ -53,18 +56,22 @@ export default function EditDeck() {
     }, [])
 
     const handleDeleteCard = id => {
-        axios.delete('api/deck/card?id=' + id, config)
-            .then(res => {
-                setDeleteMsg('Card successfully deleted')
-            })
-            .catch(err => {
-                setDeleteMsg(err.response.data)
-            })
-
-        setAddedCards((oldCards) =>
-            oldCards.filter((card) => card.Id !== id))
-        setAllCards((oldCards) =>
-            oldCards.filter((card) => card.Id !== id))
+        if (deck.CreatorId === userId) {
+            axios.delete('api/deck/card?id=' + id, config)
+                .then(res => {
+                    setDeleteMsg('Card successfully deleted')
+                    setAddedCards((oldCards) =>
+                        oldCards.filter((card) => card.Id !== id))
+                    setAllCards((oldCards) =>
+                        oldCards.filter((card) => card.Id !== id))
+                })
+                .catch(err => {
+                    setDeleteMsg(err.response.data)
+                })
+        }
+        else {
+            setDeleteMsg('Only owner can delete cards!')
+        }
     }
 
     const handleAdd = card => {
@@ -103,10 +110,10 @@ export default function EditDeck() {
 
     return (
         <>
-            <h1>{deck.Title}</h1>
+            <h1>{deck.Title + isOwner}</h1>
             {
                 deck.isPrivate &&
-                <button onClick={() => handlePublish()}> Make public </button>
+                <button onClick={() => handlePublish()}> Make public  </button>
             }
             {
                 !deck.isPrivate &&
@@ -114,11 +121,16 @@ export default function EditDeck() {
             }
             <button onClick={() => handleDeleteDeck()}> Delete deck </button>
 
-            {infoMsg && <div>{infoMsg}</div> }
-            <AddCard deckId={id} handleAdd={handleAdd} />
+            {infoMsg && <div>{infoMsg}</div>}
 
-            <button onClick={() => handleCardList(categories.NEW) }> Recently Added </button>
-            <button onClick={() => handleCardList(categories.ALL)}> All Cards </button>
+            {
+                deck.CreatorId === userId && 
+                <>
+                    <AddCard deckId={id} handleAdd={handleAdd} /> 
+                    <button onClick={() => handleCardList(categories.NEW)}> Recently Added </button>
+                    <button onClick={() => handleCardList(categories.ALL)}> All Cards </button>
+                </>
+            }
 
             {
                 chosenCategory === categories.NEW &&

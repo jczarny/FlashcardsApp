@@ -59,6 +59,21 @@ namespace FlashcardsApp.Controllers
             }
         }
 
+        [HttpPost("acquire"), Authorize]
+        public async Task<ActionResult<User>> Acquire(string id)
+        {
+            string userId = Request.Headers["userId"].ToString();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("insert into UserDecks(UserId, DeckId)" +
+                    $" values ({Int32.Parse(userId)}, {Int32.Parse(id)})", connection);
+                await connection.OpenAsync();
+                cmd.ExecuteReader();
+
+                return Ok();
+            }
+        }
+
         [HttpPost("login"), Authorize]
         public IActionResult Post(UserDto user)
         {

@@ -1,7 +1,7 @@
 ﻿import React, { useState, useContext } from 'react';
 import { AuthContext } from '../contexts/AuthContext';
 
-export default function DeckCard({ title, creatorId, description, id, handleLearn, handleEdit }) {
+export default function DeckCard({ title, description, id, handleLearn, handleEdit }) {
     const { userId } = useContext(AuthContext)
 
     return (
@@ -10,8 +10,7 @@ export default function DeckCard({ title, creatorId, description, id, handleLear
                 <h5 className="card-title">{title}</h5>
                 <p className="card-text">{description}</p>
                 <button onClick={() => { handleLearn(id) }} type="button" className="btn btn-primary btn-block mb-4">Learn</button>
-                {creatorId === userId && 
-                    <button onClick={() => { handleEdit(id) }} type="button" className="btn btn-primary btn-block mb-4">Edit</button>}
+                <button onClick={() => { handleEdit(id) }} type="button" className="btn btn-primary btn-block mb-4">Edit</button>
             </div>
         </div>
     )

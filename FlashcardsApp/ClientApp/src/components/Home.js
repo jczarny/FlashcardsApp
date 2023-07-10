@@ -19,10 +19,6 @@ export default function Home() {
             axios.get(`api/user/owned-decks?id=${userId}`, config)
                 .then(res => {
                     setDecks(res.data)
-                    //console.log(res.data)
-                    //decks.map(deck => {
-                    //    console.log(deck.Title)
-                    //})
                 })
                 .catch(err => {
                     if (err.response.status === 401) {
