@@ -41,8 +41,6 @@ export default function Home() {
 
 return (
     <>
-        <button onClick={logout}>Wyloguj</button>
-        {accessToken && <div>Access Token: {accessToken}</div>}
         <div className="m-3 p-5 w-85 mx-auto border">
             <p className="display-4">Your decks</p>
             <div className="container text-center">

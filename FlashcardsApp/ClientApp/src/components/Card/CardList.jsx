@@ -19,7 +19,7 @@ export default function CardList({ title, cards, HandleDelete, deleteMsg }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {
+                    { 
                         cards.map((card) =>
                             <CardItem key={card.No} Id={card.Id} No={card.No} Front={card.Front}
                                 Reverse={card.Reverse} HandleDelete={HandleDelete} />

@@ -37,6 +37,9 @@ export class NavMenu extends Component {
                     this.context.userId && 
                     <>
                         <NavItem>
+                            <NavLink tag={Link} className="text-dark" to="/">Learn</NavLink>
+                        </NavItem>
+                        <NavItem>
                             <NavLink tag={Link} className="text-dark" to="/browse">Browse Decks</NavLink>
                         </NavItem>     
                         <NavItem>

@@ -1,6 +1,7 @@
 ﻿import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 import axios from 'axios';
+import "../../custom.css"
 
 export default function AddCard({ deckId, handleAdd }) {
     const CARD_REGEX = new RegExp('^[a-zA-Z0-9]([a-zA-Z0-9 ]){1,32}[a-zA-Z0-9]$');
@@ -80,73 +81,80 @@ export default function AddCard({ deckId, handleAdd }) {
 
     return (
         <>
-            <form>
-                <h3>New card</h3>
-                <div>
-                    <label>Front: </label>
+            <div className="card m-5">
+                <div className="card-header">
+                    New card
+                </div>
+                <div className="card-body text-center">
                     <input
+                        className="form-outline w-50 mb-2"
                         type="text"
                         required
+                        placeholder="Front"
+                        size="30"
                         value={front}
                         onChange={(e) => setFront(e.target.value)}
                         onFocus={() => setFrontFocus(true)}
                         onBlur={() => setFrontFocus(false)}
                     />
-                    {frontFocus && !validFront &&
-                        <div className="p-1 bg-danger-subtle border border-primary-subtle rounded-3">
-                            <ul>
-                                <li>Between 3 and 128 characters long</li>
-                                <li>Alphanumeric characters</li>
-                            </ul>
-                        </div>
-                    }
-                </div>
-
-                <div>
-                    <label>Reverse: </label>
+                    <br />
                     <input
+                        className="form-outline w-50 mb-2"
                         type="text"
                         required
+                        placeholder="Reverse"
+                        size="30"
                         value={reverse}
                         onChange={(e) => setReverse(e.target.value)}
                         onFocus={() => setReverseFocus(true)}
                         onBlur={() => setReverseFocus(false)}
                     />
-                    {reverseFocus && !validReverse &&
-                        <div className="p-1 bg-danger-subtle border border-primary-subtle rounded-3">
-                            <ul>
-                                <li>Between 3 and 128 characters long</li>
-                                <li>Alphanumeric characters</li>
-                            </ul>
-                        </div>
-                    }
-                </div>
-                    
-                <div>
-                    <label>Description: </label>
-                    <input
+                    < br />
+                    <textarea
+                        className="form-outline w-50 mb-2 p-1"
                         type="text"
+                        placeholder="Description"
                         value={description}
+                        size="30"
+                        cols="60"
+                        rows="6"
                         onChange={(e) => setDescription(e.target.value)}
                         onFocus={() => setDescriptionFocus(true)}
                         onBlur={() => setDescriptionFocus(false)}
                     />
-                    {descriptionFocus && !validDescription &&
-                        <div className="p-1 bg-danger-subtle border border-primary-subtle rounded-3">
+                    < br />
+                    {!isPending &&
+                        <a href="#" onClick={handleSubmit} className="btn btn-primary">Add Card</a>
+                    }
+                    {isPending &&
+                        <a href="#" onClick={handleSubmit} disabled className="btn btn-primary"> Adding... </a>}
+                    {outputMsg && <div>{outputMsg}</div>}
+
+                    {frontFocus && !validFront &&
+                        <div className="d-flex m-3 align-items-center justify-content-center bg-danger-subtle border border-primary-subtle rounded-3">
                             <ul>
-                                <li>Between 3 to 128 characters long </li>
-                                <li>or empty</li>
+                                <div>Between 3 and 128 characters long</div>
+                                <div>Alphanumeric characters</div>
+                            </ul>
+                        </div>
+                    }
+                    {reverseFocus && !validReverse &&
+                        <div className="d-flex m-3 align-items-center justify-content-center bg-danger-subtle border border-primary-subtle rounded-3">
+                            <ul>
+                                <div>Between 3 and 128 characters long</div>
+                                <div>Alphanumeric characters</div>
+                            </ul>
+                        </div>
+                    }
+                    {descriptionFocus && !validDescription &&
+                        <div className="d-flex m-3 align-items-center justify-content-center bg-danger-subtle border border-primary-subtle rounded-3">
+                            <ul>
+                                <div>Between 3 to 128 characters long or empty </div>
                             </ul>
                         </div>
                     }
                 </div>
-                {!isPending &&
-                    <button type="button" onClick={handleSubmit}> Add Card </button>}
-                {isPending &&
-                    <button type="button" disabled onClick={handleSubmit}> Adding... </button>}
-                {outputMsg && <div>{outputMsg}</div> }
-            </form>
-
+            </div>
         </>
     )
 }

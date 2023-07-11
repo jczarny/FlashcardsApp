@@ -111,35 +111,41 @@ export default function EditDeck() {
     return (
         <>
             <h1>{deck.Title + isOwner}</h1>
+
+            <h3> Manage deck </h3>
             {
                 deck.isPrivate &&
-                <button onClick={() => handlePublish()}> Make public  </button>
+                <button type="button" onClick={() => handlePublish()} className="btn btn-bg btn-primary me-2">Make public</button>
             }
             {
                 !deck.isPrivate &&
-                <button disabled> Make public </button>
+                <button type="button" className="btn btn-bg btn-primary me-3" disabled>Make public</button>
             }
-            <button onClick={() => handleDeleteDeck()}> Delete deck </button>
-
+            <button onClick={() => handleDeleteDeck()} className="btn btn-bg btn-primary me-2"> Delete deck </button>
             {infoMsg && <div>{infoMsg}</div>}
-
 
             {
                 deck.CreatorId === userId && 
                 <>
-                    <AddCard deckId={id} handleAdd={handleAdd} /> 
-                    <button onClick={() => handleCardList(categories.NEW)}> Recently Added </button>
-                    <button onClick={() => handleCardList(categories.ALL)}> All Cards </button>
+                    <AddCard deckId={id} handleAdd={handleAdd}/>
+                    <div className="text-center">
+                        <button onClick={() => handleCardList(categories.NEW)} className="btn btn-bg btn-primary me-3"> Recently Added </button>
+                        <button onClick={() => handleCardList(categories.ALL)} className="btn btn-bg btn-primary me-3"> All Cards </button>
+                    </div>
                 </>
             }
 
             {
                 chosenCategory === categories.NEW &&
-                <CardList title="New cards" cards={addedCards} HandleDelete={handleDeleteCard} deleteMsg={deleteMsg} />
+                <div className="mt-4">
+                        <CardList title="New cards" cards={addedCards} HandleDelete={handleDeleteCard} deleteMsg={deleteMsg} />
+                </div>
             }
             {
                 chosenCategory === categories.ALL &&
-                <CardList title="All cards" cards={allCards} HandleDelete={handleDeleteCard} deleteMsg={deleteMsg} />
+                <div className="mt-4">
+                    <CardList title="All cards" cards={allCards} HandleDelete={handleDeleteCard} deleteMsg={deleteMsg} />
+                </div>
             }
         </>
     )

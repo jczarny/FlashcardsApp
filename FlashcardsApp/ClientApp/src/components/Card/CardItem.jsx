@@ -8,7 +8,11 @@ export default function CardItem({ Id, No, Front, Reverse, HandleDelete  }) {
             <th scope="row">{No}</th>
             <td>{Front}</td>
             <td>{Reverse}</td>
-            <td><button onClick={() => { HandleDelete(Id) }}>Delete</button></td>
+            <td>
+                <div className="d-flex justify-content-end">
+                    <button onClick={() => { HandleDelete(Id) }} className="d-flex btn btn-sm btn-primary me-3"> Delete </button>
+                </div>
+            </td>
         </tr>
     )
 }

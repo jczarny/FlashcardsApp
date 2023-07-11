@@ -3,15 +3,15 @@
 export default function DeckItem({ Id, No, Author, Title, Description, ownedDecks, handleAcquire }) {
    
     return (
-        <tr>
+        <tr classname="d-flex align-self-stretch">
             <th scope="row">{No}</th>
             <td>{Author}</td>
             <td>{Title}</td>
             <td>{Description}</td>
             { ownedDecks.includes(Id) &&
-                <td><button disabled>Owned</button></td>}
+                <td><button disabled className="btn btn-primary btn-sm mb-4">Owned</button></td>}
             {!ownedDecks.includes(Id) &&
-                <td><button onClick={() => handleAcquire(Id) }>Acquire</button></td>
+                <td><button onClick={() => handleAcquire(Id)} className="btn btn-primary btn-sm">Acquire</button></td>
             }
         </tr>
     )
