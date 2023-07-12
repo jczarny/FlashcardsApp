@@ -8,38 +8,38 @@ import BrowseDecks from "./components/Deck/BrowseDecks";
 import Logout from "./components/Login/Logout";
 
 const AppRoutes = [
-  {
-      index: true,
-      element: <Home />
-  },
-  {
-      path: '/login',
-      element: <Login />
-  },
-  {
-      path: '/register',
-      element: <Register />
-  },
-  {
-      path: '/learn/:id',
-      element: <Learn />
-  },
-  {
-      path: '/create',
-      element: <CreateDeck />
-  },
-  {
-      path: '/edit/:id',
-      element: <EditDeck />
-  },
-  {
-      path: '/browse',
-      element: <BrowseDecks />
-  },
-  {
-      path: '/logout',
-      element: <Logout />
-  }
+    {
+        index: true,
+        element: <Home />
+    },
+    {
+        path: '/login',
+        element: <Login />
+    },
+    {
+        path: '/register',
+        element: <Register />
+    },
+    {
+        path: '/learn/:id',
+        element: <Learn />
+    },
+    {
+        path: '/create',
+        element: <CreateDeck />
+    },
+    {
+        path: '/edit/:id',
+        element: <EditDeck />
+    },
+    {
+        path: '/browse',
+        element: <BrowseDecks />
+    },
+    {
+        path: '/logout',
+        element: <Logout />
+    }
 ];
 
 export default AppRoutes;

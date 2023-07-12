@@ -1,7 +1,7 @@
 ﻿import React, { useState, useContext } from 'react';
 import { AuthContext } from '../../contexts/AuthContext';
 
-export default function CardItem({ Id, No, Front, Reverse, HandleDelete  }) {
+export default function CardItem({ Id, No, Front, Reverse, HandleDelete }) {
 
     return (
         <tr>

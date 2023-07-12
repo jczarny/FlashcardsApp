@@ -6,8 +6,8 @@ import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Login() {
     const { userId, setUserId, accessToken, setAccessToken } = useContext(AuthContext)
-    const [username, setUsername] = useState('faewafa');
-    const [password, setPassword] = useState('pwd1111');
+    const [username, setUsername] = useState('EssaPlejer15');
+    const [password, setPassword] = useState('Eurobeat123');
     const [isPending, setIsPending] = useState(false);
     const [validCred, setValidCred] = useState(true);
     const navigate = useNavigate();

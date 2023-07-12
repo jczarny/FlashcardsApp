@@ -4,8 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
@@ -16,173 +19,271 @@ namespace FlashcardsApp.Controllers
     [EnableCors("_myAllowSpecificOrigins")]
     public class DeckController : ControllerBase
     {
-        private readonly FlashcardsContext _context;
         private readonly string _connectionString;
-        private readonly IConfiguration _configuration;
 
-        public DeckController(FlashcardsContext context, IConfiguration configuration)
+        // Get db context, project config and connection string
+        public DeckController(IConfiguration configuration)
         {
-            _context = context;
-            _configuration = configuration;
             _connectionString = configuration.GetConnectionString("SQLServer")!;
         }
 
+        // Create deck with given title and description
         [HttpPost("create"), Authorize]
-        public async Task<ActionResult<DeckDto>> Create(NewDeckDto deck)
+        public async Task<ActionResult<NewDeckDto>> CreateDeck([FromBody] NewDeckDto deck)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                SqlCommand cmd = new SqlCommand("spDeck_Create", connection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@CreatorId", deck.UserId));
-                cmd.Parameters.Add(new SqlParameter("@Title", deck.Title));
-                cmd.Parameters.Add(new SqlParameter("@Description", deck.Description));
+            int result = ValidateNewDeckDto(deck);
+            if (result == 0) return BadRequest();
 
-                await connection.OpenAsync();
-                cmd.ExecuteReader();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand("spDeck_Create", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@CreatorId", deck.UserId));
+                    cmd.Parameters.Add(new SqlParameter("@Title", deck.Title));
+                    cmd.Parameters.Add(new SqlParameter("@Description", deck.Description));
+
+                    await connection.OpenAsync();
+                    cmd.ExecuteReader();
+                }
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
+        // Get user's deck by its id
         [HttpGet, Authorize]
-        public async Task<ActionResult<DeckDto>> GetDeck(string deckId)
+        public async Task<ActionResult<DeckDto>> GetDeck([FromQuery] string deckId)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            string userId = Request.Headers["userId"].ToString();
+
+            // Check if deckId is really an integer
+            int number;
+            bool isInt = int.TryParse(deckId, out number);
+            if (!isInt)
             {
-                SqlCommand command = new SqlCommand(
-                    "select * from Decks where id=" + deckId,
-                    connection);
+                return BadRequest();
+            }
 
-                await connection.OpenAsync();
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    // Get the deck info with checking if user really owns this deck
+                    SqlCommand command = new SqlCommand(
+                        $"select * from Decks d join UserDecks ud on d.id = ud.DeckId where d.id={deckId} and ud.UserId = {userId}",
+                        connection);
 
-                SqlDataReader reader = command.ExecuteReader();
-                reader.Read();
-                DeckDto deck = new DeckDto{
-                    Id = reader.GetInt32("Id"),
-                    CreatorId = reader.GetInt32("CreatorId"),
-                    Title = reader.GetString("Title"),
-                    Description = reader.GetString("Description"),
-                    isPrivate = reader.GetBoolean("isPrivate")
-                };
-                reader.Close();
+                    await connection.OpenAsync();
 
-                SqlCommand cmd = new SqlCommand(
-                    "select * from cards where Deckid=" + deckId, connection);
-
-                reader = cmd.ExecuteReader();
-
-                while(reader.Read()) {
-                    CardDto card = new CardDto
+                    SqlDataReader reader = command.ExecuteReader();
+                    reader.Read();
+                    DeckDto deck = new DeckDto
                     {
                         Id = reader.GetInt32("Id"),
-                        Front = reader.GetString("Front"),
-                        Reverse = reader.GetString("Reverse"),
-                        Description = reader.GetString("Description")
+                        CreatorId = reader.GetInt32("CreatorId"),
+                        Title = reader.GetString("Title"),
+                        Description = reader.GetString("Description"),
+                        isPrivate = reader.GetBoolean("isPrivate")
                     };
-                    deck.CardDtos.Add(card);
+                    reader.Close();
+
+                    // Get deck's cards
+                    SqlCommand cmd = new SqlCommand(
+                        "select * from cards where Deckid=" + deckId, connection);
+
+                    reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        CardDto card = new CardDto
+                        {
+                            Id = reader.GetInt32("Id"),
+                            Front = reader.GetString("Front"),
+                            Reverse = reader.GetString("Reverse"),
+                            Description = reader.GetString("Description")
+                        };
+                        deck.CardDtos.Add(card);
+                    }
+                    string json = JsonSerializer.Serialize(deck);
+                    reader.Close();
+                    return Ok(json);
                 }
-                string json = JsonSerializer.Serialize(deck);
-                reader.Close();
-                return Ok(json);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
+        // Get all public decks within db
         [HttpGet("getPublic"), Authorize]
         public async Task<ActionResult<DeckDto>> GetPublicDecks()
         {
             List<DeckDto> decks = new List<DeckDto>();
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+
+            try
             {
-                SqlCommand command = new SqlCommand("select * from Decks d join Users u on d.CreatorId = u.Id where d.isPrivate=0", connection);
-                await connection.OpenAsync();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    decks.Add(new DeckDto
-                    {
-                        Id = reader.GetInt32("Id"),
-                        CreatorId = reader.GetInt32("CreatorId"),
-                        CreatorName = reader.GetString("Username"),
-                        Title = reader.GetString("Title"),
-                        Description = reader.GetString("Description")
-                    });
-                }
+                    SqlCommand command = new SqlCommand("select * from Decks d join Users u on d.CreatorId = u.Id where d.isPrivate=0", connection);
+                    await connection.OpenAsync();
+                    SqlDataReader reader = command.ExecuteReader();
 
-                string json = JsonSerializer.Serialize(decks);
-                reader.Close();
-                return Ok(json);
+                    while (reader.Read())
+                    {
+                        decks.Add(new DeckDto
+                        {
+                            Id = reader.GetInt32("Id"),
+                            CreatorId = reader.GetInt32("CreatorId"),
+                            CreatorName = reader.GetString("Username"),
+                            Title = reader.GetString("Title"),
+                            Description = reader.GetString("Description")
+                        });
+                    }
+
+                    string json = JsonSerializer.Serialize(decks);
+                    reader.Close();
+                    return Ok(json);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
+        // Add card to a deck
         [HttpPost("addcard"), Authorize]
         public async Task<ActionResult<DeckDto>> AddCard(CardDto card)
         {
-            string json = "";
-            using (SqlConnection connection = new SqlConnection(_connectionString))
-            {
-                SqlCommand cmd = new SqlCommand("spCard_Add", connection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@DeckId", card.DeckId));
-                cmd.Parameters.Add(new SqlParameter("@Front", card.Front));
-                cmd.Parameters.Add(new SqlParameter("@Reverse", card.Reverse));
-                cmd.Parameters.Add(new SqlParameter("@Description", card.Description));
-                var p1 = cmd.Parameters.Add(new SqlParameter("@Id", card.Id));
-                p1.Direction = ParameterDirection.Output;
-                await connection.OpenAsync();
+            int result = ValidateCardDto(card);
+            if (result == 0)
+                return BadRequest();
 
-                using (var rdr = cmd.ExecuteReader())
+            string json = "";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    json = JsonSerializer.Serialize(p1.Value);
+                    SqlCommand cmd = new SqlCommand("spCard_Add", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@DeckId", card.DeckId));
+                    cmd.Parameters.Add(new SqlParameter("@Front", card.Front));
+                    cmd.Parameters.Add(new SqlParameter("@Reverse", card.Reverse));
+                    cmd.Parameters.Add(new SqlParameter("@Description", card.Description));
+                    var p1 = cmd.Parameters.Add(new SqlParameter("@Id", card.Id));
+                    p1.Direction = ParameterDirection.Output;
+                    await connection.OpenAsync();
+
+                    using (var rdr = cmd.ExecuteReader())
+                    {
+                        json = JsonSerializer.Serialize(p1.Value);
+                    }
                 }
+                return Ok(json);
             }
-            return Ok(json);
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
+        // Delete card from a deck
         [HttpDelete("card"), Authorize]
         public async Task<ActionResult<DeckDto>> DeleteCard(string id)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                SqlCommand cmd = new SqlCommand($"delete from cards where id = {Int32.Parse(id)}", connection);
-                await connection.OpenAsync();
-                cmd.ExecuteReader();
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand($"delete from cards where id = {Int32.Parse(id)}", connection);
+                    await connection.OpenAsync();
+                    cmd.ExecuteReader();
 
-                return Ok();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
+        // Delete deck
         [HttpDelete, Authorize]
         public async Task<ActionResult<DeckDto>> DeleteDeck(string id)
         {
             string userId = Request.Headers["userId"].ToString();
 
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            try
             {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
 
-                SqlCommand cmd = new SqlCommand("spDeck_Delete", connection);
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(new SqlParameter("@DeckId", id));
-                cmd.Parameters.Add(new SqlParameter("@UserId", userId));
+                    SqlCommand cmd = new SqlCommand("spDeck_Delete", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@DeckId", Int32.Parse(id)));
+                    cmd.Parameters.Add(new SqlParameter("@UserId", userId));
 
-                await connection.OpenAsync();
-                cmd.ExecuteReader();
+                    await connection.OpenAsync();
+                    cmd.ExecuteReader();
 
-                return Ok();
+                    return Ok();
+                }
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
+        // Make deck public (available to use for everyone)
         [HttpPatch("publish"), Authorize]
-        public async Task<ActionResult<DeckDto>> Publish(string id)
+        public async Task<ActionResult<DeckDto>> PublishDeck(string id)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                SqlCommand cmd = new SqlCommand("update decks set isPrivate=0 where Id=" + id, connection);
-                await connection.OpenAsync();
-                cmd.ExecuteReader();
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    SqlCommand cmd = new SqlCommand("update decks set isPrivate=0 where Id=" + Int32.Parse(id), connection);
+                    await connection.OpenAsync();
+                    cmd.ExecuteReader();
 
-                return Ok();
+                    return Ok();
+                }
             }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        private int ValidateCardDto(CardDto card)
+        {
+            string regex = "^[a-zA-Z0-9]([a-zA-Z0-9 ]){1,32}[a-zA-Z0-9]$";
+
+            if (card == null) return 0;
+            if (!Regex.IsMatch(card.Front, regex)) return 0;
+            if (!Regex.IsMatch(card.Reverse, regex)) return 0;
+            if (card.Description.Length != 0 && !Regex.IsMatch(card.Description, regex)) return 0;
+            return 1;
+        }
+
+        private int ValidateNewDeckDto(NewDeckDto newDeck)
+        {
+            string regex = "^[a-zA-Z0-9]([a-zA-Z0-9 ]){4,32}[a-zA-Z0-9]$";
+
+            if (newDeck == null) return 0;
+            if (!Regex.IsMatch(newDeck.Title, regex)) return 0;
+
+            return 1;
         }
     }
 }

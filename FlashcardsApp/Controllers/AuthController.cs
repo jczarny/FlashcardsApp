@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace FlashcardsApp.Controllers
 {
@@ -31,91 +32,74 @@ namespace FlashcardsApp.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register(UserDto request)
         {
-            var userList = _context.Users
-                .Where(o => o.Username == request.Username).ToList();
-            if(userList.Any())
-                return BadRequest("Such username already exists");
-
-            CreateHashPassword(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
-            User user = new User
-            {
-                Username = request.Username,
-                PasswordHash = passwordHash,
-                PasswordSalt = passwordSalt
-            };
+            int validationResult = validateUserCredentials(request);
+            if (validationResult == 0)
+                return BadRequest();
 
             try
             {
+                var userList = _context.Users
+                    .Where(o => o.Username == request.Username).ToList();
+                if (userList.Any())
+                    return BadRequest("Such username already exists");
+
+                CreateHashPassword(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+
+                User user = new User
+                {
+                    Username = request.Username,
+                    PasswordHash = passwordHash,
+                    PasswordSalt = passwordSalt
+                };
+
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
-            } catch(Exception ex)
+
+                return Ok(user);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-            return Ok(user);
         }
 
         /*
          * Login with given username and password, set http-only refresh token, 
-         * reponse with generated access token
+         * response with generated access token
          */
         [HttpPost("login")]
         public async Task<ActionResult<User>> Login(UserDto request)
         {
-            var userList = _context.Users
-                .Where(o => o.Username == request.Username).ToList();
-            if (userList.Count() != 1)
-                return Unauthorized("User not found");
-
-            User user = userList[0];
-            bool isVerified = VerifyHashPassword(request.Password, user.PasswordHash, user.PasswordSalt);
-
-            if (isVerified)
-            {
-                var token = CreateAccessToken(user);
-                var refreshToken = CreateRefreshToken();
-                SetRefreshToken(refreshToken);
-
-                User refreshedUser = user;
-                refreshedUser.RefreshToken = refreshToken.Token;
-                refreshedUser.TokenExpires = DateTime.Now.AddMinutes(5);
-                _context.Entry(user).CurrentValues.SetValues(refreshedUser);
-
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return Ok( new { AccessToken = token, UserId = user.Id });
-                } catch (Exception ex)
-                {
-                    return BadRequest(ex.Message);
-                }
-            }
-            else
-                return Unauthorized("Invalid password");
-
-        }
-        
-        // Logout, clear user's refresh token.
-        [HttpPost("logout")]
-        public async Task<ActionResult<User>> Logout()
-        {
-            string userId = Request.Headers["userId"].ToString();
-
-            var userList = _context.Users
-                .Where(o => o.Id == Int32.Parse(userId)).ToList();
-            if(userList.Count != 1) {
-                return BadRequest("Something went wrong and we couldnt find such user");
-            }
-            var user = userList[0];
-            User refreshedUser = user;
-            refreshedUser.RefreshToken = null;
-            _context.Entry(user).CurrentValues.SetValues(refreshedUser);
+            int validationResult = validateUserCredentials(request);
+            if (validationResult == 0)
+                return BadRequest();
 
             try
             {
-                await _context.SaveChangesAsync();
-                return Ok();
+                var userList = _context.Users
+                    .Where(o => o.Username == request.Username).ToList();
+                if (userList.Count() != 1)
+                    return Unauthorized("User not found");
+
+                User user = userList[0];
+                bool isVerified = VerifyHashPassword(request.Password, user.PasswordHash, user.PasswordSalt);
+
+                if (isVerified)
+                {
+                    var token = CreateAccessToken(user);
+                    var refreshToken = CreateRefreshToken();
+                    SetRefreshToken(refreshToken);
+
+                    User refreshedUser = user;
+                    refreshedUser.RefreshToken = refreshToken.Token;
+                    refreshedUser.TokenExpires = DateTime.Now.AddMinutes(5);
+                    _context.Entry(user).CurrentValues.SetValues(refreshedUser);
+
+                    await _context.SaveChangesAsync();
+                    return Ok(new { AccessToken = token, UserId = user.Id });
+                }
+                else
+                    return Unauthorized("Invalid password");
             }
             catch (Exception ex)
             {
@@ -123,45 +107,75 @@ namespace FlashcardsApp.Controllers
             }
 
         }
-        
+
+        // Logout, clear user's refresh token.
+        [HttpPost("logout")]
+        public async Task<ActionResult<User>> Logout()
+        {
+            try
+            {
+                string userId = Request.Headers["userId"].ToString();
+
+                var userList = _context.Users
+                    .Where(o => o.Id == Int32.Parse(userId)).ToList();
+                if (userList.Count != 1)
+                {
+                    return BadRequest("Something went wrong and we couldnt find such user");
+                }
+                var user = userList[0];
+                User refreshedUser = user;
+                refreshedUser.RefreshToken = null;
+                _context.Entry(user).CurrentValues.SetValues(refreshedUser);
+
+                await _context.SaveChangesAsync();
+                return Ok();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
         // Refresh refresh token
         // TODO: add client id&secret in order to filter db while checking refresh token
         [HttpPost("refresh-token"), Authorize]
         public async Task<ActionResult<string>> RefreshToken()
         {
-            var currRefreshToken = Request.Cookies["refreshToken"];
-
-            var userList = _context.Users
-                .Where(o => o.RefreshToken == currRefreshToken).ToList();
-
-            if (userList.Any())
+            try
             {
-                User user = userList[0];
+                var currRefreshToken = Request.Cookies["refreshToken"];
 
-                if (user.TokenExpires < DateTime.Now)
-                    return Unauthorized("Token expired.");
+                var userList = _context.Users
+                    .Where(o => o.RefreshToken == currRefreshToken).ToList();
 
-                string accessToken = CreateAccessToken(user);
-                var newRefreshToken = CreateRefreshToken();
-                SetRefreshToken(newRefreshToken);
-
-                User refreshedUser = user;
-                refreshedUser.RefreshToken = newRefreshToken.Token;
-                refreshedUser.TokenExpires = DateTime.Now.AddMinutes(5);
-                _context.Entry(user).CurrentValues.SetValues(refreshedUser);
-
-                try
+                if (userList.Any())
                 {
+                    User user = userList[0];
+
+                    if (user.TokenExpires < DateTime.Now)
+                        return Unauthorized("Token expired.");
+
+                    string accessToken = CreateAccessToken(user);
+                    var newRefreshToken = CreateRefreshToken();
+                    SetRefreshToken(newRefreshToken);
+
+                    User refreshedUser = user;
+                    refreshedUser.RefreshToken = newRefreshToken.Token;
+                    refreshedUser.TokenExpires = DateTime.Now.AddMinutes(5);
+                    _context.Entry(user).CurrentValues.SetValues(refreshedUser);
+
                     await _context.SaveChangesAsync();
                     return Ok(new { AccessToken = accessToken });
-
-                } catch(Exception ex)
-                {
-                    return BadRequest(ex.Message);
                 }
+                else
+                    return Unauthorized("Invalid refresh token.");
             }
-            else
-                return Unauthorized("Invalid refresh token.");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // Create access token
@@ -211,23 +225,37 @@ namespace FlashcardsApp.Controllers
         }
 
         // Hashes password with generated salt
-        private void CreateHashPassword(string password, out byte[] passwordHash, out byte[] passwordSalt) 
-        { 
+        private void CreateHashPassword(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
             using (var hmac = new HMACSHA256())
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
-    
+
         // Validates given password by hashing it with generated previously salt
-        private bool VerifyHashPassword(string password, byte[] passwordHash, byte[] passwordSalt) 
-        { 
+        private bool VerifyHashPassword(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
             using (var hmac = new HMACSHA256(passwordSalt))
             {
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(passwordHash);
             }
+        }
+
+        private int validateUserCredentials(UserDto user)
+        {
+            string regexUsername = "^[a-zA-Z0-9]([a-zA-Z0-9]){3,18}[a-zA-Z0-9]$";
+            string regexPassword = "^(?=.*?[A-Z])(?=.*?[a-z]).{8,}$";
+
+            Console.WriteLine(user.Username, !Regex.IsMatch(user.Username, regexUsername));
+            Console.WriteLine(user.Password, !Regex.IsMatch(user.Password, regexPassword));
+
+            if (user == null) return 0;
+            if (!Regex.IsMatch(user.Username, regexUsername)) return 0;
+            if (!Regex.IsMatch(user.Password, regexPassword)) return 0;
+            return 1;
         }
     }
 }
