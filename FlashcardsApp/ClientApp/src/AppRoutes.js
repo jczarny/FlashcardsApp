@@ -21,7 +21,7 @@ const AppRoutes = [
         element: <Register />
     },
     {
-        path: '/learn/:id',
+        path: '/learn/:deckId',
         element: <Learn />
     },
     {

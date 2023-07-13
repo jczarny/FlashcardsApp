@@ -1,5 +1,6 @@
 ﻿using FlashcardsApp.Dtos;
 using FlashcardsApp.Entities;
+using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -20,33 +21,42 @@ namespace FlashcardsApp.Controllers
             _connectionString = configuration.GetConnectionString("SQLServer")!;
         }
 
-        [HttpPost("rate"), Authorize]
-        public async Task<IActionResult> Rate()
+        [HttpPost("evaluate"), Authorize]
+        public async Task<IActionResult> Evaluate([FromBody] LearnDto learnData)
         {
-            return Ok();
+            string userId = Request.Headers["userId"].ToString();
+
+            Learn learnModel = new Learn();
+            int result = await learnModel.EvaluateResult(
+                Int32.Parse(userId), learnData.CardId, learnData.DeckId, learnData.Response, _connectionString);
+            if (result == 1)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
 
         [HttpGet, Authorize]
-        public async Task<ActionResult<List<CardDto>>> GetLearningCards()
+        public async Task<ActionResult<List<CardDto>>> GetLearningCards(int deckId, int amount)
         {
-            List<CardDto> cards = new List<CardDto>();
-            CardDto card = new CardDto
-            {
-                Id = 1,
-                DeckId = 1,
-                Front = "siema",
-                Reverse = "hello sup",
-                Description = "powitanie"
-            };
-            cards.Add(card);
-            cards.Add(card);
-            cards.Add(card);
-            cards.Add(card);
-            cards.Add(card);
+            string userId = Request.Headers["userId"].ToString();
+
+            Learn learnModel = new Learn();
+            List<CardDto> cards = await learnModel.GetLearningCards(Int32.Parse(userId), deckId, amount, _connectionString);
 
             string json = JsonSerializer.Serialize(cards);
 
-            return Ok(json);
+            if (cards.Count != 0)
+            {
+                return Ok(json);
+            }
+            else
+            {
+                return Ok();
+            }
         }
     }
 }
