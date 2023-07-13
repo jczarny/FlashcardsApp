@@ -12,3 +12,22 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+.cardContainer{
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.card {
+    width: 50%;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.floating {
+    float: right;
+}

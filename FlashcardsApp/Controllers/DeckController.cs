@@ -29,7 +29,7 @@ namespace FlashcardsApp.Controllers
 
         // Create deck with given title and description
         [HttpPost("create"), Authorize]
-        public async Task<ActionResult<NewDeckDto>> CreateDeck([FromBody] NewDeckDto deck)
+        public async Task<ActionResult> CreateDeck([FromBody] NewDeckDto deck)
         {
             int result = ValidateNewDeckDto(deck);
             if (result == 0) return BadRequest();
