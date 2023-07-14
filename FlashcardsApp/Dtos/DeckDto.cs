@@ -3,6 +3,7 @@
     public class DeckDto
     {
         public int Id { get; set; }
+        public int? CardsToRevise { get; set; }
         public int CreatorId { get; set; }
         public string CreatorName { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;

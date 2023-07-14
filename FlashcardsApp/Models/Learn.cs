@@ -158,14 +158,14 @@ namespace FlashcardsApp.Models
                 {
                     cmd = new SqlCommand(
                         $"update RevisionLog set " +
-                        $"Date=@date, Ease={response}, Stage={newStage} " +
+                        $"Date=DATETRUNC(day, @date), Ease={response}, Stage={newStage} " +
                         $"where UserId={userId} and DeckId={deckId} and CardId={cardId}", connection);
                 }
                 else
                 {
                     cmd = new SqlCommand(
                         $"insert into RevisionLog (UserId, DeckId, CardId, Date, Ease, Stage) " +
-                        $"values ({userId}, {deckId}, {cardId}, @date, {response}, {newStage})", connection);
+                        $"values ({userId}, {deckId}, {cardId}, DATETRUNC(day, @date), {response}, {newStage})", connection);
                 }
 
                 cmd.Parameters.Add("@date", SqlDbType.DateTime2).Value = newDate;
@@ -174,6 +174,32 @@ namespace FlashcardsApp.Models
 
                 return 1;
             }
+        }
+        /*
+         * Get amount of cards that need to be revised today.
+         * Shown in home's deck card.
+         */
+        public async Task<Dictionary<int, int>> GetReviseCardAmount(int userId, string connectionString)
+        {
+            // Dictionary of deckId's and amount of cards to revise for this particular user
+            Dictionary<int, int> CardsToReviseByDeck= new Dictionary<int, int>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand(
+                    $"select DeckId, count(*) as Amount from revisionLog where UserId={userId} and Date<=DATETRUNC(day, GETDATE()) group by DeckId", connection);
+
+                await connection.OpenAsync();
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    int deckId = reader.GetInt32("DeckId");
+                    int cardsAmount = reader.GetInt32("Amount");
+                    CardsToReviseByDeck.Add(deckId, cardsAmount);
+                }
+            }
+            return CardsToReviseByDeck;
         }
 
         private DateTime CalcualteNextRevisionDate(int stage, int response)

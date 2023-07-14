@@ -18,6 +18,7 @@ export default function Home() {
         else {
             axios.get(`api/user/owned-decks?id=${userId}`, config)
                 .then(res => {
+                    console.log(res.data)
                     setDecks(res.data)
                 })
                 .catch(err => {
@@ -48,7 +49,7 @@ return (
                     {
                         decks.map((deck) =>
                             <DeckCard key={deck.Id} title={deck.Title} creatorId={deck.CreatorId}
-                                description={deck.Description} id={deck.Id}
+                                description={deck.Description} id={deck.Id} amountToRevise={deck.CardsToRevise}
                                 handleLearn={handleLearn} handleEdit={handleEdit} />
                         )
                     }

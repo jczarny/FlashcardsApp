@@ -1,4 +1,5 @@
 ﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Entities;
 using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -26,11 +27,15 @@ namespace FlashcardsApp.Controllers
             _connectionString = configuration.GetConnectionString("SQLServer")!;
         }
 
+        /*
+         * Get dictionary of owned decks and amount of cards to revise today.
+         */
         [HttpGet("owned-decks"), Authorize]
-        public async Task<ActionResult<User>> GetOwnedDecks(string id)
+        public async Task<ActionResult<DeckDto>> GetOwnedDecks(string id)
         {
             try
             {
+
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     SqlCommand command = new SqlCommand(
@@ -52,9 +57,21 @@ namespace FlashcardsApp.Controllers
                             Description = reader.GetString("Description")
                         });
                     }
+                    reader.Close();
+
+                    Learn learnModel = new();
+                    Dictionary<int, int> deckIdAmountPairs = await learnModel.GetReviseCardAmount(Int32.Parse(id), _connectionString);
+
+                    for(int i = 0; i<decks.Count; i++)
+                    {
+                        bool isDeckInLog = deckIdAmountPairs.TryGetValue(decks[i].Id, out int amount);
+                        if (isDeckInLog)
+                            decks[i].CardsToRevise = amount;
+                        else
+                            decks[i].CardsToRevise = 0;
+                    }
 
                     string json = JsonSerializer.Serialize(decks);
-                    reader.Close();
                     return Ok(json);
                 }
             } catch(Exception ex)
