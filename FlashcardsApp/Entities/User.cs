@@ -1,6 +1,6 @@
 ﻿using FlashcardsApp.Entities;
 
-namespace FlashcardsApp.Models
+namespace FlashcardsApp.Entities
 {
     public class User
     {

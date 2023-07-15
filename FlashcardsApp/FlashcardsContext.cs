@@ -1,5 +1,4 @@
 ﻿using FlashcardsApp.Entities;
-using FlashcardsApp.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlashcardsApp
@@ -78,7 +77,7 @@ namespace FlashcardsApp
                 new User
                 {
                     Id = 3,
-                    Username = "admin",
+                    Username = "Admin111",
                     PasswordHash = new byte[256],
                     PasswordSalt = new byte[256],
                 });
