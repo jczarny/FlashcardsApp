@@ -68,7 +68,7 @@ namespace FlashcardsApp.Controllers
          * response with generated access token
          */
         [HttpPost("login")]
-        public async Task<ActionResult<User>> Login(UserDto request)
+        public async Task<IActionResult> Login(UserDto request)
         {
             int validationResult = validateUserCredentials(request);
             if (validationResult == 0)
@@ -110,7 +110,7 @@ namespace FlashcardsApp.Controllers
 
         // Logout, clear user's refresh token.
         [HttpPost("logout")]
-        public async Task<ActionResult<User>> Logout()
+        public async Task<IActionResult> Logout()
         {
             try
             {

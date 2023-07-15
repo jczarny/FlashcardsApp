@@ -29,7 +29,7 @@ namespace FlashcardsApp.Controllers
 
         // Create deck with given title and description
         [HttpPost("create"), Authorize]
-        public async Task<ActionResult> CreateDeck([FromBody] NewDeckDto deck)
+        public async Task<IActionResult> CreateDeck([FromBody] NewDeckDto deck)
         {
             int result = ValidateNewDeckDto(deck);
             if (result == 0) return BadRequest();
@@ -122,7 +122,7 @@ namespace FlashcardsApp.Controllers
 
         // Get all public decks within db
         [HttpGet("getPublic"), Authorize]
-        public async Task<ActionResult<DeckDto>> GetPublicDecks()
+        public async Task<ActionResult<List<DeckDto>>> GetPublicDecks()
         {
             List<DeckDto> decks = new List<DeckDto>();
 
@@ -157,9 +157,9 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Add card to a deck
+        // Add card to a deck, return id of new card
         [HttpPost("addcard"), Authorize]
-        public async Task<ActionResult<DeckDto>> AddCard(CardDto card)
+        public async Task<ActionResult<int>> AddCard(CardDto card)
         {
             int result = ValidateCardDto(card);
             if (result == 0)
@@ -195,7 +195,7 @@ namespace FlashcardsApp.Controllers
 
         // Delete card from a deck
         [HttpDelete("card"), Authorize]
-        public async Task<ActionResult<DeckDto>> DeleteCard(string id)
+        public async Task<IActionResult> DeleteCard(string id)
         {
             try
             {
@@ -216,7 +216,7 @@ namespace FlashcardsApp.Controllers
 
         // Delete deck
         [HttpDelete, Authorize]
-        public async Task<ActionResult<DeckDto>> DeleteDeck(string id)
+        public async Task<IActionResult> DeleteDeck(string id)
         {
             string userId = Request.Headers["userId"].ToString();
 
@@ -245,7 +245,7 @@ namespace FlashcardsApp.Controllers
 
         // Make deck public (available to use for everyone)
         [HttpPatch("publish"), Authorize]
-        public async Task<ActionResult<DeckDto>> PublishDeck(string id)
+        public async Task<IActionResult> PublishDeck(string id)
         {
             try
             {

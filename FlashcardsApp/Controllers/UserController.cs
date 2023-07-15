@@ -31,7 +31,7 @@ namespace FlashcardsApp.Controllers
          * Get dictionary of owned decks and amount of cards to revise today.
          */
         [HttpGet("owned-decks"), Authorize]
-        public async Task<ActionResult<DeckDto>> GetOwnedDecks(string id)
+        public async Task<ActionResult<List<DeckDto>>> GetOwnedDecks(string id)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace FlashcardsApp.Controllers
         }
 
         [HttpPost("acquire"), Authorize]
-        public async Task<ActionResult<User>> Acquire(string id)
+        public async Task<IActionResult> Acquire(string id)
         {
             try
             {
