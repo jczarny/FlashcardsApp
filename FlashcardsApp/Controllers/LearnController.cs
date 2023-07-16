@@ -15,38 +15,52 @@ namespace FlashcardsApp.Controllers
     public class LearnController : ControllerBase
     {
         private readonly string _connectionString;
-
+        private readonly LearnModel _learnModel;
         public LearnController(IConfiguration configuration)
         {
 
             _connectionString = configuration.GetConnectionString("SQLServer")!;
+            _learnModel = new LearnModel(_connectionString);
         }
 
         [HttpPost("evaluate"), Authorize]
         public async Task<IActionResult> Evaluate([FromBody] LearnDto learnData)
         {
-            string userId = Request.Headers["userId"].ToString();
-
-            Learn learnModel = new Learn();
-            int result = await learnModel.EvaluateResult(
-                Int32.Parse(userId), learnData.CardId, learnData.DeckId, learnData.Response, _connectionString);
-            if (result == 1)
-            {
-                return Ok();
+            string userIdString = Request.Headers["userId"].ToString();
+            if(userIdString == null) {
+                return BadRequest("No user specified");
             }
-            else
+            bool isIdInt = int.TryParse(userIdString, out int userId);
+            if(!isIdInt) {
+                return BadRequest("Corrupted header");
+            }
+
+            try
             {
-                return BadRequest(result);
+                int result = await _learnModel.EvaluateResult(
+                    userId, learnData.CardId, learnData.DeckId, learnData.Response);
+                return Ok();
+            } catch
+            {
+                return BadRequest("Unknown error in card knowledge evaluation");
             }
         }
 
         [HttpGet, Authorize]
         public async Task<ActionResult<List<CardDto>>> GetLearningCards(int deckId, int amount)
         {
-            string userId = Request.Headers["userId"].ToString();
+            string userIdString = Request.Headers["userId"].ToString();
+            if (userIdString == null)
+            {
+                return BadRequest("No user specified");
+            }
+            bool isIdInt = int.TryParse(userIdString, out int userId);
+            if (!isIdInt)
+            {
+                return BadRequest("Corrupted header");
+            }
 
-            Learn learnModel = new Learn();
-            List<CardDto> cards = await learnModel.GetLearningCards(Int32.Parse(userId), deckId, amount, _connectionString);
+            List<CardDto> cards = await _learnModel.GetLearningCards(userId, deckId, amount);
 
             string json = JsonSerializer.Serialize(cards);
 

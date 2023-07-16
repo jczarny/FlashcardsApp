@@ -1,5 +1,6 @@
 ﻿using FlashcardsApp.Dtos;
 using FlashcardsApp.Entities;
+using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -20,34 +21,42 @@ namespace FlashcardsApp.Controllers
     public class DeckController : ControllerBase
     {
         private readonly string _connectionString;
+        private readonly DeckModel _deckModel;
 
         // Get db context, project config and connection string
         public DeckController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("SQLServer")!;
+            _deckModel = new DeckModel(_connectionString);
         }
 
-        // Create deck with given title and description
-        [HttpPost("create"), Authorize]
-        public async Task<IActionResult> CreateDeck([FromBody] NewDeckDto deck)
+        // Get user's deck by its id
+        [HttpGet, Authorize]
+        public async Task<ActionResult<DeckDto>> GetDeck([FromQuery] string deckId)
         {
-            int result = ValidateNewDeckDto(deck);
-            if (result == 0) return BadRequest();
+            string userIdString = Request.Headers["userId"].ToString();
+
+            bool isIdInt = int.TryParse(userIdString, out int userId);
+            if (!isIdInt)
+            {
+                return BadRequest();
+            }
+            isIdInt = int.TryParse(deckId, out int deckIdInt);
+            if (!isIdInt)
+            {
+                return BadRequest();
+            }
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand("spDeck_Create", connection);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@CreatorId", deck.UserId));
-                    cmd.Parameters.Add(new SqlParameter("@Title", deck.Title));
-                    cmd.Parameters.Add(new SqlParameter("@Description", deck.Description));
+                // Get the deck info with checking if user really owns this deck
+                DeckDto deck = await _deckModel.GetDeckInfo(deckIdInt, userId);
 
-                    await connection.OpenAsync();
-                    cmd.ExecuteReader();
-                }
-                return Ok();
+                // Get deck's cards
+                deck.CardDtos = await _deckModel.GetDeckCards(deckIdInt);
+
+                string json = JsonSerializer.Serialize(deck);
+                return Ok(json);
             }
             catch (Exception ex)
             {
@@ -55,64 +64,18 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Get user's deck by its id
-        [HttpGet, Authorize]
-        public async Task<ActionResult<DeckDto>> GetDeck([FromQuery] string deckId)
+        // Create deck with given title and description
+        [HttpPost("create"), Authorize]
+        public async Task<IActionResult> CreateDeck([FromBody] NewDeckDto deck)
         {
-            string userId = Request.Headers["userId"].ToString();
-
-            // Check if deckId is really an integer
-            int number;
-            bool isInt = int.TryParse(deckId, out number);
-            if (!isInt)
-            {
+            bool isValid = ValidateNewDeckDto(deck);
+            if (isValid is false)
                 return BadRequest();
-            }
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    // Get the deck info with checking if user really owns this deck
-                    SqlCommand command = new SqlCommand(
-                        $"select * from Decks d join UserDecks ud on d.id = ud.DeckId where d.id={deckId} and ud.UserId = {userId}",
-                        connection);
-
-                    await connection.OpenAsync();
-
-                    SqlDataReader reader = command.ExecuteReader();
-                    reader.Read();
-                    DeckDto deck = new DeckDto
-                    {
-                        Id = reader.GetInt32("Id"),
-                        CreatorId = reader.GetInt32("CreatorId"),
-                        Title = reader.GetString("Title"),
-                        Description = reader.GetString("Description"),
-                        isPrivate = reader.GetBoolean("isPrivate")
-                    };
-                    reader.Close();
-
-                    // Get deck's cards
-                    SqlCommand cmd = new SqlCommand(
-                        "select * from cards where Deckid=" + deckId, connection);
-
-                    reader = cmd.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        CardDto card = new CardDto
-                        {
-                            Id = reader.GetInt32("Id"),
-                            Front = reader.GetString("Front"),
-                            Reverse = reader.GetString("Reverse"),
-                            Description = reader.GetString("Description")
-                        };
-                        deck.CardDtos.Add(card);
-                    }
-                    string json = JsonSerializer.Serialize(deck);
-                    reader.Close();
-                    return Ok(json);
-                }
+                await _deckModel.CreateDeck(deck);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -124,32 +87,11 @@ namespace FlashcardsApp.Controllers
         [HttpGet("getPublic"), Authorize]
         public async Task<ActionResult<List<DeckDto>>> GetPublicDecks()
         {
-            List<DeckDto> decks = new List<DeckDto>();
-
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    SqlCommand command = new SqlCommand("select * from Decks d join Users u on d.CreatorId = u.Id where d.isPrivate=0", connection);
-                    await connection.OpenAsync();
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        decks.Add(new DeckDto
-                        {
-                            Id = reader.GetInt32("Id"),
-                            CreatorId = reader.GetInt32("CreatorId"),
-                            CreatorName = reader.GetString("Username"),
-                            Title = reader.GetString("Title"),
-                            Description = reader.GetString("Description")
-                        });
-                    }
-
-                    string json = JsonSerializer.Serialize(decks);
-                    reader.Close();
-                    return Ok(json);
-                }
+                List<DeckDto> decks = await _deckModel.GetPublicDecks();
+                string json = JsonSerializer.Serialize(decks);
+                return Ok(json);
             }
             catch (Exception ex)
             {
@@ -161,30 +103,15 @@ namespace FlashcardsApp.Controllers
         [HttpPost("addcard"), Authorize]
         public async Task<ActionResult<int>> AddCard(CardDto card)
         {
-            int result = ValidateCardDto(card);
-            if (result == 0)
-                return BadRequest();
+            bool result = ValidateCardDto(card);
+            if (result is false)
+                return BadRequest("Invalid card values");
 
             string json = "";
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand("spCard_Add", connection);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@DeckId", card.DeckId));
-                    cmd.Parameters.Add(new SqlParameter("@Front", card.Front));
-                    cmd.Parameters.Add(new SqlParameter("@Reverse", card.Reverse));
-                    cmd.Parameters.Add(new SqlParameter("@Description", card.Description));
-                    var p1 = cmd.Parameters.Add(new SqlParameter("@Id", card.Id));
-                    p1.Direction = ParameterDirection.Output;
-                    await connection.OpenAsync();
-
-                    using (var rdr = cmd.ExecuteReader())
-                    {
-                        json = JsonSerializer.Serialize(p1.Value);
-                    }
-                }
+                var cardId = await _deckModel.AddCardToDeck(card);
+                json = JsonSerializer.Serialize(cardId);
                 return Ok(json);
             }
             catch (Exception ex)
@@ -197,16 +124,19 @@ namespace FlashcardsApp.Controllers
         [HttpDelete("card"), Authorize]
         public async Task<IActionResult> DeleteCard(string id)
         {
+            bool isIdInt = int.TryParse(id, out int cardId);
+            if (!isIdInt)
+            {
+                return BadRequest();
+            }
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand($"delete from cards where id = {Int32.Parse(id)}", connection);
-                    await connection.OpenAsync();
-                    cmd.ExecuteReader();
-
+                var result = await _deckModel.DeleteCardFromDeck(cardId);
+                if (result == Results.Ok())
                     return Ok();
-                }
+                else
+                    return BadRequest();
             }
             catch (Exception ex)
             {
@@ -218,23 +148,25 @@ namespace FlashcardsApp.Controllers
         [HttpDelete, Authorize]
         public async Task<IActionResult> DeleteDeck(string id)
         {
-            string userId = Request.Headers["userId"].ToString();
+            string userIdString = Request.Headers["userId"].ToString();
+            bool isIdInt = int.TryParse(userIdString, out int userId);
+            if (!isIdInt)
+            {
+                return BadRequest();
+            }
+
+            isIdInt = int.TryParse(id, out int deckId);
+            if (!isIdInt)
+            {
+                return BadRequest();
+            }
 
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
+                var result = await _deckModel.DeleteDeck(userId, deckId);
 
-                    SqlCommand cmd = new SqlCommand("spDeck_Delete", connection);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@DeckId", Int32.Parse(id)));
-                    cmd.Parameters.Add(new SqlParameter("@UserId", userId));
-
-                    await connection.OpenAsync();
-                    cmd.ExecuteReader();
-
-                    return Ok();
-                }
+                if(result == Results.Ok()) return Ok();
+                else return BadRequest();
             }
             catch (Exception ex)
             {
@@ -247,16 +179,17 @@ namespace FlashcardsApp.Controllers
         [HttpPatch("publish"), Authorize]
         public async Task<IActionResult> PublishDeck(string id)
         {
+            bool isIdInt = int.TryParse(id, out int deckId);
+            if (!isIdInt)
+            {
+                return BadRequest();
+            }
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand("update decks set isPrivate=0 where Id=" + Int32.Parse(id), connection);
-                    await connection.OpenAsync();
-                    cmd.ExecuteReader();
-
-                    return Ok();
-                }
+                var result = await _deckModel.PublishDeck(deckId);
+                if (result == Results.Ok()) return Ok();
+                else return BadRequest();
             }
             catch (Exception ex)
             {
@@ -265,25 +198,25 @@ namespace FlashcardsApp.Controllers
 
         }
 
-        private int ValidateCardDto(CardDto card)
+        private bool ValidateCardDto(CardDto card)
         {
             string regex = "^[a-zA-Z0-9]([a-zA-Z0-9 ]){1,32}[a-zA-Z0-9]$";
 
-            if (card == null) return 0;
-            if (!Regex.IsMatch(card.Front, regex)) return 0;
-            if (!Regex.IsMatch(card.Reverse, regex)) return 0;
-            if (card.Description.Length != 0 && !Regex.IsMatch(card.Description, regex)) return 0;
-            return 1;
+            if (card == null) return false;
+            if (!Regex.IsMatch(card.Front, regex)) return false;
+            if (!Regex.IsMatch(card.Reverse, regex)) return true;
+            if (card.Description.Length != 0 && !Regex.IsMatch(card.Description, regex)) return true;
+            return true;
         }
 
-        private int ValidateNewDeckDto(NewDeckDto newDeck)
+        private bool ValidateNewDeckDto(NewDeckDto newDeck)
         {
             string regex = "^[a-zA-Z0-9]([a-zA-Z0-9 ]){4,32}[a-zA-Z0-9]$";
 
-            if (newDeck == null) return 0;
-            if (!Regex.IsMatch(newDeck.Title, regex)) return 0;
+            if (newDeck == null) return false;
+            if (!Regex.IsMatch(newDeck.Title, regex)) return false;
 
-            return 1;
+            return true;
         }
     }
 }

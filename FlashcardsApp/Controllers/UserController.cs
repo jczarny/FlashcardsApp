@@ -20,11 +20,13 @@ namespace FlashcardsApp.Controllers
     [EnableCors("_myAllowSpecificOrigins")]
     public class UserController : ControllerBase
     {
+        private readonly UserModel _userModel;
         private readonly string _connectionString;
-
-        public UserController(IConfiguration configuration) {
+        public UserController(IConfiguration configuration)
+        {
 
             _connectionString = configuration.GetConnectionString("SQLServer")!;
+            _userModel = new UserModel(_connectionString);
         }
 
         /*
@@ -33,48 +35,37 @@ namespace FlashcardsApp.Controllers
         [HttpGet("owned-decks"), Authorize]
         public async Task<ActionResult<List<DeckDto>>> GetOwnedDecks(string id)
         {
+            if (id == null)
+            {
+                return BadRequest("No user specified");
+            }
+            bool isIdInt = int.TryParse(id, out int userId);
+            if (!isIdInt)
+            {
+                return BadRequest("Corrupted header");
+            }
+
             try
             {
+                List<DeckDto> decks = await _userModel.GetUsersDeckInfo(userId);
 
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                LearnModel learnModel = new LearnModel(_connectionString);
+                Dictionary<int, int> deckIdAmountPairs = await learnModel.GetReviseCardAmount(userId);
+
+                for (int i = 0; i < decks.Count; i++)
                 {
-                    SqlCommand command = new SqlCommand(
-                        "select * from UserDecks as ud join Decks as d on ud.DeckId = d.Id where userId=" + Int32.Parse(id),
-                        connection);
-
-                    await connection.OpenAsync();
-
-                    SqlDataReader reader = command.ExecuteReader();
-
-                    List<DeckDto> decks = new List<DeckDto>();
-                    while (reader.Read())
-                    {
-                        decks.Add(new DeckDto
-                        {
-                            Id = reader.GetInt32("DeckId"),
-                            CreatorId = reader.GetInt32("CreatorId"),
-                            Title = reader.GetString("Title"),
-                            Description = reader.GetString("Description")
-                        });
-                    }
-                    reader.Close();
-
-                    Learn learnModel = new();
-                    Dictionary<int, int> deckIdAmountPairs = await learnModel.GetReviseCardAmount(Int32.Parse(id), _connectionString);
-
-                    for(int i = 0; i<decks.Count; i++)
-                    {
-                        bool isDeckInLog = deckIdAmountPairs.TryGetValue(decks[i].Id, out int amount);
-                        if (isDeckInLog)
-                            decks[i].CardsToRevise = amount;
-                        else
-                            decks[i].CardsToRevise = 0;
-                    }
-
-                    string json = JsonSerializer.Serialize(decks);
-                    return Ok(json);
+                    bool isDeckInLog = deckIdAmountPairs.TryGetValue(decks[i].Id, out int amount);
+                    if (isDeckInLog)
+                        decks[i].CardsToRevise = amount;
+                    else
+                        decks[i].CardsToRevise = 0;
                 }
-            } catch(Exception ex)
+
+                string json = JsonSerializer.Serialize(decks);
+                return Ok(json);
+
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -83,19 +74,33 @@ namespace FlashcardsApp.Controllers
         [HttpPost("acquire"), Authorize]
         public async Task<IActionResult> Acquire(string id)
         {
+            if (id == null)
+            {
+                return BadRequest("No deck specified");
+            }
+            bool isIdInt = int.TryParse(id, out int deckId);
+            if (!isIdInt)
+            {
+                return BadRequest("Corrupted header");
+            }
+
+            string userIdString = Request.Headers["userId"].ToString();
+            if (userIdString == null)
+            {
+                return BadRequest("No user specified");
+            }
+            isIdInt = int.TryParse(userIdString, out int userId);
+            if (!isIdInt)
+            {
+                return BadRequest("Corrupted header");
+            }
+
             try
             {
-                string userId = Request.Headers["userId"].ToString();
-                using (SqlConnection connection = new SqlConnection(_connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand("insert into UserDecks(UserId, DeckId)" +
-                        $" values ({Int32.Parse(userId)}, {Int32.Parse(id)})", connection);
-                    await connection.OpenAsync();
-                    cmd.ExecuteReader();
-
-                    return Ok();
-                }
-            } catch (Exception ex)
+                await _userModel.AcquirePublicDeck(userId, deckId);
+                return Ok();
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
