@@ -31,6 +31,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<FlashcardsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer")));
 
+
 // Configure JWS authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

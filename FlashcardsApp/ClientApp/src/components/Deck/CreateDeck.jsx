@@ -4,7 +4,7 @@ import { AuthContext } from '../../contexts/AuthContext';
 import axios from 'axios';
 
 export default function CreateDeck() {
-    const { userId, getAuthentication, logout, config } = useContext(AuthContext)
+    const {getAuthentication, logout, config } = useContext(AuthContext)
     const navigate = useNavigate();
 
     const [title, setTitle] = useState('');
@@ -17,11 +17,10 @@ export default function CreateDeck() {
     const [isPending, setIsPending] = useState(false);
 
     useEffect(() => {
-        if (!userId) {
-            navigate('/login');
-        }
-        else if (getAuthentication() === 0)
-            logout();
+        getAuthentication().then(authRes => {
+            if (!authRes)
+                logout();
+        })
     }, [])
 
     useEffect(() => {
@@ -37,24 +36,25 @@ export default function CreateDeck() {
 
         if (!validTitle)
             setOutputMsg("Invalid title!");
-        else if (getAuthentication() === 0)
-            logout();
-        else {
-            setIsPending(true);
-            axios.post('api/deck/create', {
-                userId: userId,
-                Title: title,
-                description: description
-            }, config)
-                .then(res => {
-                    navigate('/')
-                    setIsPending(false);
-                })
-                .catch(err => {
-                    setOutputMsg(err.response.data)
-                    setIsPending(false);
-                })
-        }
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                setIsPending(true);
+                axios.post('api/deck/create', {
+                    Title: title,
+                    description: description
+                }, authHeader)
+                    .then(res => {
+                        navigate('/')
+                        setIsPending(false);
+                    })
+                    .catch(err => {
+                        setOutputMsg(err.response.data)
+                        setIsPending(false);
+                    })
+            }
+            else
+                logout();
+        })
     }
 
     return (

@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 export default function Learn() {
-    const { config, logout } = useContext(AuthContext)
+    const { config, logout, getAuthentication } = useContext(AuthContext)
     const { deckId } = useParams()
 
     const [isFrontSide, setIsFrontSide] = useState(true)
@@ -44,51 +44,64 @@ export default function Learn() {
     const handleSubmit = (number) => {
         // handle sending stuff to db
         console.log(cardsQueue[0].Id, parseInt(deckId, 10), number)
-        axios.post('api/learn/evaluate',
-            {
-                CardId: cardsQueue[0].Id,
-                DeckId: parseInt(deckId, 10),
-                Response: number
-            }, config)
-            .then(res => {
-                // set front side to true
-                setIsFrontSide(true)
 
-                // pop the card we were currently using
-                setCardsQueue((cards) => cards.filter((card, index) => index !== 0))
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                axios.post('api/learn/evaluate',
+                    {
+                        CardId: cardsQueue[0].Id,
+                        DeckId: parseInt(deckId, 10),
+                        Response: number
+                    }, authHeader)
+                    .then(res => {
+                        // set front side to true
+                        setIsFrontSide(true)
 
-                // increment cards counter
-                setCardsCounter(oldCount => oldCount + 1)
-            })
-            .catch(err => {
-                if (err.response.status === 401) {
-                    console.log('Not authorised')
-                    logout()
-                }
-                else if (err.response.status === 404)
-                    console.log('Not found');
-            })
+                        // pop the card we were currently using
+                        setCardsQueue((cards) => cards.filter((card, index) => index !== 0))
+
+                        // increment cards counter
+                        setCardsCounter(oldCount => oldCount + 1)
+                    })
+                    .catch(err => {
+                        if (err.response.status === 401) {
+                            console.log('Not authorised')
+                            logout()
+                        }
+                        else if (err.response.status === 404)
+                            console.log('Not found');
+                    })
+            }
+            else
+                logout()
+        })
     }
 
     const getLearningCards = (e) => {
         console.log('getting more learning cards...')
-        axios.get(`api/learn?deckId=${deckId}&amount=5`, config)
-            .then(res => {
-                if (Object.keys(res.data).length !== 0)
-                    setCardsQueue(res.data)
-                else
-                    setNoCardsLeft(true)
+        getAuthentication().then(authRes => {
+            if (authRes) {
+                axios.get(`api/learn?deckId=${deckId}&amount=5`, config)
+                    .then(res => {
+                        if (Object.keys(res.data).length !== 0)
+                            setCardsQueue(res.data)
+                        else
+                            setNoCardsLeft(true)
 
-                setFirstLoading(false)
-            })
-            .catch(err => {
-                if (err.response.status === 401) {
-                    console.log('Not authorised')
-                    logout()
-                }
-                else if (err.response.status === 404)
-                    console.log('Not found');
-            })
+                        setFirstLoading(false)
+                    })
+                    .catch(err => {
+                        if (err.response.status === 401) {
+                            console.log('Not authorised')
+                            logout()
+                        }
+                        else if (err.response.status === 404)
+                            console.log('Not found');
+                    })
+            }
+            else
+                logout()
+        })
     }
 
     const handleGoBack = e => {

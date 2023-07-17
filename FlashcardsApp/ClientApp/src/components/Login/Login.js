@@ -5,9 +5,9 @@ import '../../custom.css'
 import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Login() {
-    const { userId, setUserId, accessToken, setAccessToken } = useContext(AuthContext)
+    const { setIsLoggedIn, setAccessToken } = useContext(AuthContext)
     const [username, setUsername] = useState('EssaPlejer15');
-    const [password, setPassword] = useState('Eurobeat123');
+    const [password, setPassword] = useState('Essunia15');
     const [isPending, setIsPending] = useState(false);
     const [validCred, setValidCred] = useState(true);
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function Login() {
         })
             .then(res => {
                 setAccessToken(res.data.accessToken)
-                setUserId(res.data.userId)
+                setIsLoggedIn(true)
                 setIsPending(false)
                 navigate('/')
             })

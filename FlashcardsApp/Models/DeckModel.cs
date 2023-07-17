@@ -17,7 +17,7 @@ namespace FlashcardsApp.Models
             _connectionString = connectionString;
         }
 
-        public async Task<IResult> CreateDeck(NewDeckDto deck)
+        public async Task<bool> CreateDeck(NewDeckDto deck, int userId)
         {
             try
             {
@@ -25,14 +25,14 @@ namespace FlashcardsApp.Models
                 {
                     SqlCommand cmd = new SqlCommand("spDeck_Create", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.Add(new SqlParameter("@CreatorId", deck.UserId));
+                    cmd.Parameters.Add(new SqlParameter("@CreatorId", userId));
                     cmd.Parameters.Add(new SqlParameter("@Title", deck.Title));
                     cmd.Parameters.Add(new SqlParameter("@Description", deck.Description));
 
                     await connection.OpenAsync();
                     cmd.ExecuteReader();
                 }
-                return Results.Ok();
+                return true;
             } catch
             {
                 throw;
@@ -59,7 +59,7 @@ namespace FlashcardsApp.Models
                     DeckDto deck = new DeckDto
                     {
                         Id = reader.GetInt32("Id"),
-                        CreatorId = reader.GetInt32("CreatorId"),
+                        IsOwner = reader.GetInt32("CreatorId") == userId ? true : false,
                         Title = reader.GetString("Title"),
                         Description = reader.GetString("Description"),
                         isPrivate = reader.GetBoolean("isPrivate")
@@ -108,7 +108,7 @@ namespace FlashcardsApp.Models
             }
         }
 
-        public async Task<List<DeckDto>> GetPublicDecks()
+        public async Task<List<DeckDto>> GetPublicDecks(int userId)
         {
             List<DeckDto> decks = new List<DeckDto>();
             try
@@ -124,7 +124,7 @@ namespace FlashcardsApp.Models
                         decks.Add(new DeckDto
                         {
                             Id = reader.GetInt32("Id"),
-                            CreatorId = reader.GetInt32("CreatorId"),
+                            IsOwner = reader.GetInt32("CreatorId") == userId ? true : false,
                             CreatorName = reader.GetString("Username"),
                             Title = reader.GetString("Title"),
                             Description = reader.GetString("Description")
@@ -163,7 +163,7 @@ namespace FlashcardsApp.Models
             }
         }
     
-        public async Task<IResult> DeleteCardFromDeck(int cardId)
+        public async Task<bool> DeleteCardFromDeck(int cardId)
         {
             try
             {
@@ -173,13 +173,13 @@ namespace FlashcardsApp.Models
                     await connection.OpenAsync();
                     cmd.ExecuteReader();
 
-                    return Results.Ok();
+                    return true;
                 }
             }
             catch { throw; }
         }
 
-        public async Task<IResult> DeleteDeck(int userId, int deckId)
+        public async Task<bool> DeleteDeck(int userId, int deckId)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace FlashcardsApp.Models
                     await connection.OpenAsync();
                     cmd.ExecuteReader();
 
-                    return Results.Ok();
+                    return true;
                 }
             }
             catch
@@ -203,7 +203,7 @@ namespace FlashcardsApp.Models
             }
         }
 
-        public async Task<IResult> PublishDeck(int deckId)
+        public async Task<bool> PublishDeck(int deckId)
         {
             try
             {
@@ -213,7 +213,7 @@ namespace FlashcardsApp.Models
                     await connection.OpenAsync();
                     cmd.ExecuteReader();
 
-                    return Results.Ok();
+                    return true;
                 }
             }
             catch

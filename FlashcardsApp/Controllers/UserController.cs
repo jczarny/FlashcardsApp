@@ -33,20 +33,15 @@ namespace FlashcardsApp.Controllers
          * Get dictionary of owned decks and amount of cards to revise today.
          */
         [HttpGet("owned-decks"), Authorize]
-        public async Task<ActionResult<List<DeckDto>>> GetOwnedDecks(string id)
+        public async Task<ActionResult<List<DeckDto>>> GetOwnedDecks()
         {
-            if (id == null)
-            {
-                return BadRequest("No user specified");
-            }
-            bool isIdInt = int.TryParse(id, out int userId);
-            if (!isIdInt)
-            {
-                return BadRequest("Corrupted header");
-            }
 
             try
             {
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
+
                 List<DeckDto> decks = await _userModel.GetUsersDeckInfo(userId);
 
                 LearnModel learnModel = new LearnModel(_connectionString);
@@ -72,7 +67,7 @@ namespace FlashcardsApp.Controllers
         }
 
         [HttpPost("acquire"), Authorize]
-        public async Task<IActionResult> Acquire(string id)
+        public async Task<IActionResult> Acquire([FromQuery] string id)
         {
             if (id == null)
             {
@@ -81,22 +76,14 @@ namespace FlashcardsApp.Controllers
             bool isIdInt = int.TryParse(id, out int deckId);
             if (!isIdInt)
             {
-                return BadRequest("Corrupted header");
-            }
-
-            string userIdString = Request.Headers["userId"].ToString();
-            if (userIdString == null)
-            {
-                return BadRequest("No user specified");
-            }
-            isIdInt = int.TryParse(userIdString, out int userId);
-            if (!isIdInt)
-            {
-                return BadRequest("Corrupted header");
+                return BadRequest("Corrupted query");
             }
 
             try
             {
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
                 await _userModel.AcquirePublicDeck(userId, deckId);
                 return Ok();
             }

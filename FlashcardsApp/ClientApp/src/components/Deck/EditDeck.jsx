@@ -7,7 +7,7 @@ import AddCard from "../Card/AddCard";
 import CardList from '../Card/CardList';
 
 export default function EditDeck() {
-    const { userId, getAuthentication, config, logout } = useContext(AuthContext)
+    const { userId, getAuthentication, logout } = useContext(AuthContext)
     const [deck, setDeck] = useState('')
 
     const [isOwner, setIsOwner] = useState('')
@@ -25,53 +25,58 @@ export default function EditDeck() {
     const [infoMsg, setInfoMsg] = useState('');
 
     useEffect(() => {
-        if (!userId) {
-            navigate('/login');
-        }
-        else if (getAuthentication() === 0)
-            logout();
-        else {
-            axios.get(`api/deck?deckId=${id}`, config)
-                .then(res => {
-                    setDeck(res.data)
-                    setAllCards(res.data.CardDtos)
-                    setAllCards(cards =>
-                        cards.map((card,index) => ({
-                            ...card,
-                            No: index
-                        }))
-                    )
-                    if (res.data.CreatorId === userId)
-                        setIsOwner(' (Owner) ')
-                })
-                .catch(err => {
-                    if (err.response.status === 401) {
-                        console.log('Not authorised')
-                        logout()
-                    }
-                    else if (err.response.status === 404)
-                        console.log('Not found');
-                })
-        }
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                axios.get(`api/deck?deckId=${id}`, authHeader)
+                    .then(res => {
+                        setDeck(res.data)
+                        setAllCards(res.data.CardDtos)
+                        setAllCards(cards =>
+                            cards.map((card, index) => ({
+                                ...card,
+                                No: index
+                            }))
+                        )
+                        if (res.data.IsOwner)
+                            setIsOwner(' (Owner) ')
+                    })
+                    .catch(err => {
+                        if (err.response.status === 401) {
+                            console.log('Not authorised')
+                            logout()
+                        }
+                        else if (err.response.status === 404)
+                            console.log('Not found');
+                    })
+            }
+            else
+                logout();
+        })
     }, [])
 
     const handleDeleteCard = id => {
-        if (deck.CreatorId === userId) {
-            axios.delete('api/deck/card?id=' + id, config)
-                .then(res => {
-                    setDeleteMsg('Card successfully deleted')
-                    setAddedCards((oldCards) =>
-                        oldCards.filter((card) => card.Id !== id))
-                    setAllCards((oldCards) =>
-                        oldCards.filter((card) => card.Id !== id))
-                })
-                .catch(err => {
-                    setDeleteMsg(err.response.data)
-                })
-        }
-        else {
-            setDeleteMsg('Only owner can delete cards!')
-        }
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                if (deck.IsOwner) {
+                    axios.delete('api/deck/card?id=' + id, authHeader)
+                        .then(res => {
+                            setDeleteMsg('Card successfully deleted')
+                            setAddedCards((oldCards) =>
+                                oldCards.filter((card) => card.Id !== id))
+                            setAllCards((oldCards) =>
+                                oldCards.filter((card) => card.Id !== id))
+                        })
+                        .catch(err => {
+                            setDeleteMsg(err.response.data)
+                        })
+                }
+                else {
+                    setDeleteMsg('Only owner can delete cards!')
+                }
+            }
+            else
+                logout();
+        })
     }
 
     const handleAdd = card => {
@@ -87,25 +92,37 @@ export default function EditDeck() {
     }
 
     const handlePublish = () => {
-        axios.patch('api/deck/publish?id=' + deck.Id, {}, config)
-            .then(res => {
-                setInfoMsg('Deck published!')
-                setDeck(oldDeck => ({ ...oldDeck, isPrivate: false }))
-            })
-            .catch(err => {
-                setDeleteMsg(err.response.data)
-            })
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                axios.patch('api/deck/publish?id=' + deck.Id, {}, authHeader)
+                    .then(res => {
+                        setInfoMsg('Deck published!')
+                        setDeck(oldDeck => ({ ...oldDeck, isPrivate: false }))
+                    })
+                    .catch(err => {
+                        setDeleteMsg(err.response.data)
+                    })
+            }
+            else
+                logout();
+        })
     }
 
     const handleDeleteDeck = () => {
-        axios.delete('api/deck?id=' + id, config)
-            .then(res => {
-                setDeleteMsg('Deck successfully deleted')
-                navigate('/');
-            })
-            .catch(err => {
-                setDeleteMsg(err.response.data)
-            })
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                axios.delete('api/deck?id=' + id, authHeader)
+                    .then(res => {
+                        setDeleteMsg('Deck successfully deleted')
+                        navigate('/');
+                    })
+                    .catch(err => {
+                        setDeleteMsg(err.response.data)
+                    })
+            }
+            else
+                logout();
+        })
     }
 
     return (
@@ -125,7 +142,7 @@ export default function EditDeck() {
             {infoMsg && <div>{infoMsg}</div>}
 
             {
-                deck.CreatorId === userId && 
+                deck.IsOwner && 
                 <>
                     <AddCard deckId={id} handleAdd={handleAdd}/>
                     <div className="text-center">

@@ -67,7 +67,8 @@ namespace FlashcardsApp.Controllers
             {
                 var user = await _auth.LoginUser(request);
                 SetRefreshToken(user.refreshToken);
-                return Ok(new { AccessToken = user.accessToken, UserId = user.id });
+                SetUserIdToken(user.userIdToken);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -93,8 +94,11 @@ namespace FlashcardsApp.Controllers
         {
             try
             {
-                string userId = Request.Headers["userId"].ToString();
-                int result = await _auth.LogoutUser(Int32.Parse(userId));
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
+                int result = await _auth.LogoutUser(userId);
+                DeleteTokens();
                 return Ok();
             }
             catch (Exception ex)
@@ -113,17 +117,22 @@ namespace FlashcardsApp.Controllers
 
         // Refresh refresh token
         // TODO: add client id&secret in order to filter db while checking refresh token
-        [HttpPost("refresh-token"), Authorize]
-        public async Task<ActionResult<string>> RefreshToken()
+        [HttpPost("refresh-tokens")]
+        public async Task<ActionResult<string>> RefreshTokens()
         {
             try
             {
                 var currRefreshToken = Request.Cookies["refreshToken"];
                 if (currRefreshToken == null)
-                    return BadRequest("No refresh token given");
+                    return Unauthorized("No refresh token given");
 
-                var newTokens = await _auth.RefreshUserToken(currRefreshToken);
+                var currUserIdToken = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(currUserIdToken, out int userId); // just to validate id
+
+                var newTokens = await _auth.RefreshUserTokens(currRefreshToken);
                 SetRefreshToken(newTokens.refreshToken);
+                SetUserIdToken(newTokens.userIdToken);
+
                 return Ok(new { AccessToken = newTokens.accessToken });
             }
             catch (Exception ex)
@@ -139,7 +148,7 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Set http-only refresh token
+        // Set http-only cookie storing refresh token
         private void SetRefreshToken(RefreshToken refreshToken)
         {
             var cookieOptions = new CookieOptions
@@ -150,5 +159,26 @@ namespace FlashcardsApp.Controllers
             Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
         }
 
+        // Set http-only cookie storing user id 
+        private void SetUserIdToken(UserIdToken userIdToken)
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = userIdToken.Expires
+            };
+            Response.Cookies.Append("userId", userIdToken.Token, cookieOptions);
+        }
+
+        private void DeleteTokens()
+        {
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTime.UtcNow.AddDays(-1)
+            };
+            Response.Cookies.Append("userId", "null", cookieOptions);
+            Response.Cookies.Append("refreshToken", "null", cookieOptions);
+        }
     }
 }

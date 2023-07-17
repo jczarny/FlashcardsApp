@@ -5,44 +5,54 @@ import { useNavigate } from "react-router-dom";
 export const AuthContext = createContext();
 
 export default function AuthContextProvider({ children }) {
-    const [userId, setUserId] = useState('')
     const [accessToken, setAccessToken] = useState('')
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+
     const navigate = useNavigate();
 
     const config = {
         headers: {
-            userId: userId,
-            'Authorization': 'Bearer ' + accessToken
+            authorization: 'Bearer ' + accessToken
         }
     };
 
     function getAuthentication() {
-        axios.post('api/auth/refresh-token', {}, config)
+        console.log("authenticating..." + config.headers.authorization)
+        return axios.post('api/auth/refresh-tokens', {}, config)
             .then(res => {
+                const cfg = {
+                    headers: {
+                        Authorization: 'Bearer ' + res.data.accessToken
+                        }
+                }
+                setIsLoggedIn(true);
                 setAccessToken(res.data.accessToken)
-                return 1;
+                return cfg;
             })
             .catch(err => {
-                return 0;
+                setIsLoggedIn(false);
+                return false;
             })
     }
-
+     
     function logout() {
         axios.post('api/auth/logout', {}, config)
             .then(res => {
-                navigate('/')
+                navigate('/login')
                 setAccessToken('')
-                setUserId('')
+                setIsLoggedIn(false)
             })
             .catch(err => {
-                console.log(err.response.status);
-                console.log('Couldnt log out');
+                console.log(err.response);
+                //console.log('Couldnt log out');
+                navigate('/login')
+                setAccessToken('')
+                setIsLoggedIn(false)
             })
-        navigate('/login')
     }
 
     return (
-        <AuthContext.Provider value={{ userId, setUserId, accessToken, setAccessToken, getAuthentication, config, logout }}>
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, accessToken, setAccessToken, getAuthentication, config, logout }}>
             { children }
         </AuthContext.Provider>
     )

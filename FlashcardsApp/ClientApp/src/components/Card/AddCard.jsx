@@ -4,8 +4,7 @@ import axios from 'axios';
 import "../../custom.css"
 
 export default function AddCard({ deckId, handleAdd }) {
-    const CARD_REGEX = new RegExp('^[a-zA-Z0-9]([a-zA-Z0-9 ]){1,32}[a-zA-Z0-9]$');
-    const { config } = useContext(AuthContext)
+    const { config, logout, getAuthentication } = useContext(AuthContext)
 
     const [front, setFront] = useState('');
     const [validFront, setValidFront] = useState(false);
@@ -23,15 +22,24 @@ export default function AddCard({ deckId, handleAdd }) {
     const [isPending, setIsPending] = useState(false);
 
     useEffect(() => {
-        setValidFront(CARD_REGEX.test(front));
+        if (front.length > 128 || front.length < 3)
+            setValidFront(false)
+        else 
+            setValidFront(true)
     }, [front])
 
     useEffect(() => {
-        setValidReverse(CARD_REGEX.test(reverse));
+        if (reverse.length > 128 || reverse.length < 3)
+            setValidReverse(false)
+        else
+            setValidReverse(true)
     }, [reverse])
 
     useEffect(() => {
-        setValidDescription(CARD_REGEX.test(description) || description === "");
+        if (description.length > 128 || (description.length < 3 && description.length !== 0))
+            setValidDescription(false)
+        else
+            setValidDescription(true)
     }, [description])
 
     useEffect(() => {
@@ -50,32 +58,38 @@ export default function AddCard({ deckId, handleAdd }) {
             setOutputMsg('Invalid Description!')
         }
         else {
-            setIsPending(true);
-            axios.post('api/deck/addcard', {
-                Id: "-1",
-                DeckId: deckId,
-                Front: front,
-                Reverse: reverse,
-                Description: description
-            }, config)
-                .then(res => {
-                    const newCard = {
-                        Id: res.data,
+            getAuthentication().then(authRes => {
+                if (authRes) {
+                    setIsPending(true);
+                    axios.post('api/deck/addcard', {
+                        Id: "-1",
+                        DeckId: deckId,
                         Front: front,
                         Reverse: reverse,
                         Description: description
-                        }
-                    handleAdd(newCard)
-                    setFront('')
-                    setReverse('')
-                    setDescription('')
-                    setOutputMsg('Card successfully added.')
-                    setIsPending(false)
-                })
-                .catch(err => {
-                    setOutputMsg(err)
-                    setIsPending(false)
-                })
+                    }, config)
+                        .then(res => {
+                            const newCard = {
+                                Id: res.data,
+                                Front: front,
+                                Reverse: reverse,
+                                Description: description
+                            }
+                            handleAdd(newCard)
+                            setFront('')
+                            setReverse('')
+                            setDescription('')
+                            setOutputMsg('Card successfully added.')
+                            setIsPending(false)
+                        })
+                        .catch(err => {
+                            setOutputMsg(err)
+                            setIsPending(false)
+                        })
+                }
+                else
+                    logout();
+            })
         }
     }
 

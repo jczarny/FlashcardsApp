@@ -28,10 +28,11 @@ namespace FlashcardsApp.Models
                 List<DeckDto> decks = new List<DeckDto>();
                 while (reader.Read())
                 {
+                    
                     decks.Add(new DeckDto
                     {
                         Id = reader.GetInt32("DeckId"),
-                        CreatorId = reader.GetInt32("CreatorId"),
+                        IsOwner = reader.GetInt32("CreatorId") == userId ? true : false,
                         Title = reader.GetString("Title"),
                         Description = reader.GetString("Description")
                     });

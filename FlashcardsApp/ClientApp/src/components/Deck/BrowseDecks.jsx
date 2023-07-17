@@ -5,66 +5,72 @@ import axios from 'axios';
 import DeckItem from "./DeckItem";
 
 export default function BrowseDecks() {
-    const { userId, getAuthentication, config, logout } = useContext(AuthContext)
+    const { getAuthentication, logout } = useContext(AuthContext)
     const [publicDecks, setPublicDecks] = useState([])
     const [ownedDecksIds, setOwnedDecksIds] = useState([])
-    const navigate = useNavigate()
 
     useEffect(() => {
-        if (!userId) {
-            navigate('/login');
-        }
-        else if (getAuthentication() === 0)
-            logout();
-        else {
-            axios.get(`api/deck/getPublic`, config)
-                .then(res => {
-                    setPublicDecks(res.data)
-                    setPublicDecks(decks =>
-                        decks.map((deck, index) => ({
-                            ...deck,
-                            No: index
-                        })))
-                })
-                .catch(err => {
-                    if (err.response.status === 401) {
-                        console.log('Not authorised')
-                        logout()
-                    }
-                    else if (err.response.status === 404)
-                        console.log('Not found');
-                })
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                axios.get(`api/deck/getPublic`, authHeader)
+                    .then(res => {
+                        setPublicDecks(res.data)
+                        setPublicDecks(decks =>
+                            decks.map((deck, index) => ({
+                                ...deck,
+                                No: index
+                            })))
+                    })
+                    .catch(err => {
+                        if (err.response.status === 401) {
+                            console.log('Not authorised')
+                            logout()
+                        }
+                        else if (err.response.status === 404)
+                            console.log('Not found');
+                    })
 
-            axios.get(`api/user/owned-decks?id=${userId}`, config)
-                .then(res => {
-                    setOwnedDecksIds(res.data)
-                    setOwnedDecksIds(decks =>
-                        decks.map(deck => deck.Id))
-                })
-                .catch(err => {
-                    if (err.response.status === 401) {
-                        console.log('Not authorised')
-                        logout()
-                    }
-                    else if (err.response.status === 404)
-                        console.log('Not found');
-                })
-        }
+                axios.get(`api/user/owned-decks`, authHeader)
+                    .then(res => {
+                        setOwnedDecksIds(res.data)
+                        setOwnedDecksIds(decks =>
+                            decks.map(deck => deck.Id))
+                    })
+                    .catch(err => {
+                        if (err.response.status === 401) {
+                            console.log('Not authorised')
+                            logout()
+                        }
+                        else if (err.response.status === 404)
+                            console.log('Not found');
+                    })
+            }
+            else
+                logout();
+        })
     }, [])
 
     const handleAcquire = deckId => {
-        axios.post(`api/user/acquire?id=` + deckId, {}, config)
-            .then(res => {
-                setOwnedDecksIds(oldIds => [...oldIds, deckId])
-            })
-            .catch(err => {
-                if (err.response.status === 401) {
-                    console.log('Unauthorized')
-                    logout()
-                }
-                else if (err.response.status === 404)
-                    console.log('Not found');
-            })
+        getAuthentication().then(authHeader => {
+            if (authHeader) {
+                axios.post(`api/user/acquire?id=` + deckId, {}, authHeader)
+                    .then(res => {
+                        setOwnedDecksIds(oldIds => [...oldIds, deckId])
+                    })
+                    .catch(err => {
+                        if (err.response.status === 401) {
+                            console.log('Unauthorized')
+                            logout()
+                        }
+                        else if (err.response.status === 404)
+                            console.log('Not found');
+                        else
+                            console.log(err.response)
+                    })
+            }
+            else
+                logout();
+        })
     }
 
     return (
@@ -78,6 +84,7 @@ export default function BrowseDecks() {
                             <th scope="col">Author</th>
                             <th scope="col">Title</th>
                             <th scope="col">Description</th>
+                            <th scope="col">Get</th>
                         </tr>
                     </thead>
                     <tbody>

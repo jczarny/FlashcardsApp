@@ -26,17 +26,12 @@ namespace FlashcardsApp.Controllers
         [HttpPost("evaluate"), Authorize]
         public async Task<IActionResult> Evaluate([FromBody] LearnDto learnData)
         {
-            string userIdString = Request.Headers["userId"].ToString();
-            if(userIdString == null) {
-                return BadRequest("No user specified");
-            }
-            bool isIdInt = int.TryParse(userIdString, out int userId);
-            if(!isIdInt) {
-                return BadRequest("Corrupted header");
-            }
 
             try
             {
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
                 int result = await _learnModel.EvaluateResult(
                     userId, learnData.CardId, learnData.DeckId, learnData.Response);
                 return Ok();
@@ -49,15 +44,14 @@ namespace FlashcardsApp.Controllers
         [HttpGet, Authorize]
         public async Task<ActionResult<List<CardDto>>> GetLearningCards(int deckId, int amount)
         {
-            string userIdString = Request.Headers["userId"].ToString();
-            if (userIdString == null)
+            var userIdString = Request.Cookies["userId"];
+            int userId;
+            try
             {
-                return BadRequest("No user specified");
-            }
-            bool isIdInt = int.TryParse(userIdString, out int userId);
-            if (!isIdInt)
+                UserIdToken.ParseTokenToInt(userIdString, out userId);
+            } catch (Exception ex)
             {
-                return BadRequest("Corrupted header");
+                return BadRequest(ex.Message);
             }
 
             List<CardDto> cards = await _learnModel.GetLearningCards(userId, deckId, amount);

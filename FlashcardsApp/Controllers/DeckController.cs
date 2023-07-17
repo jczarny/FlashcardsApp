@@ -34,14 +34,17 @@ namespace FlashcardsApp.Controllers
         [HttpGet, Authorize]
         public async Task<ActionResult<DeckDto>> GetDeck([FromQuery] string deckId)
         {
-            string userIdString = Request.Headers["userId"].ToString();
-
-            bool isIdInt = int.TryParse(userIdString, out int userId);
-            if (!isIdInt)
+            var userIdString = Request.Cookies["userId"];
+            int userId;
+            try
             {
-                return BadRequest();
+                UserIdToken.ParseTokenToInt(userIdString, out userId);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
-            isIdInt = int.TryParse(deckId, out int deckIdInt);
+
+            bool isIdInt = int.TryParse(deckId, out int deckIdInt);
             if (!isIdInt)
             {
                 return BadRequest();
@@ -68,14 +71,29 @@ namespace FlashcardsApp.Controllers
         [HttpPost("create"), Authorize]
         public async Task<IActionResult> CreateDeck([FromBody] NewDeckDto deck)
         {
+            // validate deck data
             bool isValid = ValidateNewDeckDto(deck);
             if (isValid is false)
                 return BadRequest();
 
+            // validate userId
+            var userIdString = Request.Cookies["userId"];
+            int userId;
             try
             {
-                await _deckModel.CreateDeck(deck);
-                return Ok();
+                UserIdToken.ParseTokenToInt(userIdString, out userId);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            try
+            {
+                bool isCorrect = await _deckModel.CreateDeck(deck, userId);
+                if(isCorrect)
+                    return Ok();
+                else
+                    return BadRequest();
             }
             catch (Exception ex)
             {
@@ -87,9 +105,14 @@ namespace FlashcardsApp.Controllers
         [HttpGet("getPublic"), Authorize]
         public async Task<ActionResult<List<DeckDto>>> GetPublicDecks()
         {
+
             try
             {
-                List<DeckDto> decks = await _deckModel.GetPublicDecks();
+                // validate userId
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
+                List<DeckDto> decks = await _deckModel.GetPublicDecks(userId);
                 string json = JsonSerializer.Serialize(decks);
                 return Ok(json);
             }
@@ -132,8 +155,8 @@ namespace FlashcardsApp.Controllers
 
             try
             {
-                var result = await _deckModel.DeleteCardFromDeck(cardId);
-                if (result == Results.Ok())
+                bool isCorrect = await _deckModel.DeleteCardFromDeck(cardId);
+                if (isCorrect)
                     return Ok();
                 else
                     return BadRequest();
@@ -148,14 +171,18 @@ namespace FlashcardsApp.Controllers
         [HttpDelete, Authorize]
         public async Task<IActionResult> DeleteDeck(string id)
         {
-            string userIdString = Request.Headers["userId"].ToString();
-            bool isIdInt = int.TryParse(userIdString, out int userId);
-            if (!isIdInt)
+            var userIdString = Request.Cookies["userId"];
+            int userId;
+            try
             {
-                return BadRequest();
+                UserIdToken.ParseTokenToInt(userIdString, out userId);
+            } catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
+            
 
-            isIdInt = int.TryParse(id, out int deckId);
+            bool isIdInt = int.TryParse(id, out int deckId);
             if (!isIdInt)
             {
                 return BadRequest();
@@ -163,10 +190,12 @@ namespace FlashcardsApp.Controllers
 
             try
             {
-                var result = await _deckModel.DeleteDeck(userId, deckId);
+                var isCorrect = await _deckModel.DeleteDeck(userId, deckId);
 
-                if(result == Results.Ok()) return Ok();
-                else return BadRequest();
+                if(isCorrect) 
+                    return Ok();
+                else 
+                    return BadRequest();
             }
             catch (Exception ex)
             {
@@ -187,9 +216,11 @@ namespace FlashcardsApp.Controllers
 
             try
             {
-                var result = await _deckModel.PublishDeck(deckId);
-                if (result == Results.Ok()) return Ok();
-                else return BadRequest();
+                var isCorrect = await _deckModel.PublishDeck(deckId);
+                if (isCorrect) 
+                    return Ok();
+                else 
+                    return BadRequest();
             }
             catch (Exception ex)
             {
@@ -200,21 +231,18 @@ namespace FlashcardsApp.Controllers
 
         private bool ValidateCardDto(CardDto card)
         {
-            string regex = "^[a-zA-Z0-9]([a-zA-Z0-9 ]){1,32}[a-zA-Z0-9]$";
-
             if (card == null) return false;
-            if (!Regex.IsMatch(card.Front, regex)) return false;
-            if (!Regex.IsMatch(card.Reverse, regex)) return true;
-            if (card.Description.Length != 0 && !Regex.IsMatch(card.Description, regex)) return true;
+            if (card.Front.Length > 128 || card.Front.Length < 3) return false;
+            if (card.Reverse.Length > 128 || card.Reverse.Length < 3) return true;
+            if (card.Description.Length != 0 && card.Description.Length < 3 || card.Description.Length > 128) return false;
             return true;
         }
 
         private bool ValidateNewDeckDto(NewDeckDto newDeck)
         {
-            string regex = "^[a-zA-Z0-9]([a-zA-Z0-9 ]){4,32}[a-zA-Z0-9]$";
 
             if (newDeck == null) return false;
-            if (!Regex.IsMatch(newDeck.Title, regex)) return false;
+            if (newDeck.Title.Length > 32 || newDeck.Title.Length < 6) return false;
 
             return true;
         }

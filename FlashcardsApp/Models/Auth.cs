@@ -55,8 +55,8 @@ namespace FlashcardsApp.Models
             }
         }
 
-        // validate user credentials to login, return his userId and Access Token
-        public async Task<(string accessToken, RefreshToken refreshToken, int id)> LoginUser(UserDto userCreds)
+        // Validate user credentials to login, return his userId and Access Token
+        public async Task<(string accessToken, RefreshToken refreshToken, UserIdToken userIdToken)> LoginUser(UserDto userCreds)
         {
             bool doesUserExists = CheckIfSuchUserExists(userCreds.Username, _context);
             if (!doesUserExists)
@@ -70,6 +70,7 @@ namespace FlashcardsApp.Models
             {
                 var token = CreateAccessToken(foundUser);
                 var refreshToken = CreateRefreshToken();
+                var userIdToken = CreateUserIdToken(foundUser.Id.ToString());
 
                 User refreshedUser = foundUser;
                 refreshedUser.RefreshToken = refreshToken.Token;
@@ -79,7 +80,7 @@ namespace FlashcardsApp.Models
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return (token, refreshToken, foundUser.Id);
+                    return (token, refreshToken, userIdToken);
                 }
                 catch
                 {
@@ -115,7 +116,7 @@ namespace FlashcardsApp.Models
             }
         }
 
-        public async Task<(string accessToken, RefreshToken refreshToken)> RefreshUserToken(string currRefreshToken)
+        public async Task<(string accessToken, RefreshToken refreshToken, UserIdToken userIdToken)> RefreshUserTokens(string currRefreshToken)
         {
             var userList = _context.Users
                 .Where(o => o.RefreshToken == currRefreshToken).ToList();
@@ -130,6 +131,7 @@ namespace FlashcardsApp.Models
 
             string accessToken = CreateAccessToken(user);
             var newRefreshToken = CreateRefreshToken();
+            var newUserIdToken = CreateUserIdToken(user.Id.ToString());
 
             User refreshedUser = user;
             refreshedUser.RefreshToken = newRefreshToken.Token;
@@ -138,7 +140,7 @@ namespace FlashcardsApp.Models
             {
                 _context.Entry(user).CurrentValues.SetValues(refreshedUser);
                 await _context.SaveChangesAsync();
-                return (accessToken, newRefreshToken);
+                return (accessToken, newRefreshToken, newUserIdToken);
             }
             catch
             {
@@ -177,9 +179,20 @@ namespace FlashcardsApp.Models
             var refreshToken = new RefreshToken
             {
                 Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
-                Expires = DateTime.Now.AddMinutes(25)
+                Expires = DateTime.Now.AddMinutes(5)
             };
             return refreshToken;
+        }
+
+        // Create userId token
+        private UserIdToken CreateUserIdToken(string userId)
+        {
+            var userIdToken = new UserIdToken
+            {
+                Token = userId,
+                Expires = DateTime.Now.AddMinutes(5)
+            };
+            return userIdToken;
         }
 
         // Hashes password with generated salt
@@ -214,8 +227,8 @@ namespace FlashcardsApp.Models
 
         public int validateUserCredentials(UserDto user)
         {
-            string regexUsername = "^[a-zA-Z0-9]([a-zA-Z0-9]){3,18}[a-zA-Z0-9]$";
-            string regexPassword = "^(?=.*?[A-Z])(?=.*?[a-z]).{8,}$";
+            string regexUsername = "^[a-zA-Z0-9]([a-zA-Z0-9._]){3,18}[a-zA-Z0-9]$";
+            string regexPassword = "^([a-zA-Z0-9@*#]{8,16})$";
 
             Console.WriteLine(user.Username, !Regex.IsMatch(user.Username, regexUsername));
             Console.WriteLine(user.Password, !Regex.IsMatch(user.Password, regexPassword));

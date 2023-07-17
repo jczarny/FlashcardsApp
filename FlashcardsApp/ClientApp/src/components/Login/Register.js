@@ -4,8 +4,8 @@ import axios from 'axios';
 import { AuthContext } from '../../contexts/AuthContext';
 
 export default function Register() {
-    const USERNAME_REGEX = new RegExp('^[a-zA-Z0-9]([a-zA-Z0-9]){3,18}[a-zA-Z0-9]$');
-    const PWD_REGEX = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z]).{8,}$');
+    const USERNAME_REGEX = new RegExp('^[a-zA-Z0-9]([a-zA-Z0-9._]){3,18}[a-zA-Z0-9]$');
+    const PWD_REGEX = new RegExp('^([a-zA-Z0-9@*#]{8,16})$');
 
     const [username, setUsername] = useState('');
     const [validUsername, setValidUsername] = useState(false);
@@ -89,8 +89,8 @@ export default function Register() {
                         {usernameFocus && !validUsername &&
                             <div className="p-1 bg-danger-subtle border border-primary-subtle rounded-3">
                                 <ul>
-                                    <li>Between 5 to 20 characters long</li>
-                                    <li>Alphanumeric characters</li>
+                                    <li>Between 5 to 18 characters long</li>
+                                    <li>Alphanumeric characters and . _</li>
                                 </ul>
                             </div>
                         }
@@ -109,8 +109,8 @@ export default function Register() {
                         />
                         {passwordFocus && !validPassword &&
                             <ul>
-                                <li>Minimum 8 characters</li>
-                                <li>1 capital letter, 1 small letter and 1 number</li>
+                                <li>Between 8 to 16 characters long</li>
+                                <li>Alphanumeric characters + @*#</li>
                             </ul>
                         }
                     </div>

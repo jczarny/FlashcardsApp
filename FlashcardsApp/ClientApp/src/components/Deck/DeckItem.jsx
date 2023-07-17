@@ -3,7 +3,7 @@
 export default function DeckItem({ Id, No, Author, Title, Description, ownedDecks, handleAcquire }) {
    
     return (
-        <tr classname="d-flex align-self-stretch">
+        <tr>
             <th scope="row">{No}</th>
             <td>{Author}</td>
             <td>{Title}</td>
