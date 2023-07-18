@@ -1,10 +1,8 @@
 ﻿using FlashcardsApp.Dtos;
-using FlashcardsApp.Entities;
 using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using System.Text.Json;
 
 namespace FlashcardsApp.Controllers
@@ -23,6 +21,10 @@ namespace FlashcardsApp.Controllers
             _learnModel = new LearnModel(_connectionString);
         }
 
+        /*
+         * Evaluate user's knowledge about the card. 
+         * More about evaluation in learnModel.
+         */
         [HttpPost("evaluate"), Authorize]
         public async Task<IActionResult> Evaluate([FromBody] LearnDto learnData)
         {
@@ -41,9 +43,15 @@ namespace FlashcardsApp.Controllers
             }
         }
 
+        /*
+         * Get some relevant cards from deck to study from.
+         * amount defines how many cards to get from deck.
+         * The greater the number the less amount of responses, but its size increases.
+         */
         [HttpGet, Authorize]
-        public async Task<ActionResult<List<CardDto>>> GetLearningCards(int deckId, int amount)
+        public async Task<ActionResult<List<CardDto>>> GetLearningCards([FromQuery] int deckId, [FromQuery] int amount)
         {
+            // Validation
             var userIdString = Request.Cookies["userId"];
             int userId;
             try
@@ -54,10 +62,12 @@ namespace FlashcardsApp.Controllers
                 return BadRequest(ex.Message);
             }
 
+            // Get cards from database
             List<CardDto> cards = await _learnModel.GetLearningCards(userId, deckId, amount);
 
             string json = JsonSerializer.Serialize(cards);
 
+            // If no suitable cards were found, respond with empty Ok
             if (cards.Count != 0)
             {
                 return Ok(json);

@@ -2,6 +2,9 @@
 
 namespace FlashcardsApp.Models
 {
+    /*
+     * Token made for easier UserId management
+     */
     public class UserIdToken
     {
         public string Token { get; set; } = string.Empty;

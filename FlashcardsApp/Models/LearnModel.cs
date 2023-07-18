@@ -1,12 +1,6 @@
 ﻿using FlashcardsApp.Dtos;
-using FlashcardsApp.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Globalization;
-using System.Reflection.PortableExecutable;
-using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FlashcardsApp.Models
 {
@@ -50,14 +44,17 @@ namespace FlashcardsApp.Models
          */
         public async Task<List<CardDto>> GetLearningCards(int userId, int deckId, int cardAmount)
         {
+            // Cards to be returned in a proper order (from more urgent to less)
             List<CardDto> outCards = new();
+            // All cards that qualify to be learned now.
             List<Learn> logCards = new();
             try
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     // Sorts in a way that cards, that have their revisionlogs, are on top sorted by a date.
-                    // then there is the rest of cards with nulls that dont have logs whatsoever
+                    // then there is the rest of cards with nulls that dont have logs whatsoever.
+                    // Reason for this is to revise old cards first, then learn new ones.
                     SqlCommand cmd = new SqlCommand(
                         $"select * from Cards c left join RevisionLog rl on (c.Id = rl.CardId and rl.UserId={userId})" +
                         $"where (rl.UserId={userId} or rl.UserId is null) and c.DeckId={deckId} " +
@@ -85,8 +82,11 @@ namespace FlashcardsApp.Models
 
                     foreach (Learn card in logCards)
                     {
+                        // If card has no date set, it means it was never seen and is not in RevisionLog
+                        // Otherwise it has date describing when should be this card revised again.
                         if (card.Date != null)
                         {
+                            // If date today is past the one in database, it means it should be revisioned now
                             if (card.Date <= DateTime.Now)
                             {
                                 outCards.Add(new CardDto
@@ -125,7 +125,8 @@ namespace FlashcardsApp.Models
         }
 
         /*
-         * Evaluate user's knowledge depending on its response now and historical responses
+         * Evaluate user's knowledge depending on its response now and historical responses.
+         * Returns 1 if it evaluates successfully.
          */
         public async Task<int> EvaluateResult(int userId, int cardId, int deckId, int response)
         {
@@ -140,7 +141,7 @@ namespace FlashcardsApp.Models
                     await connection.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    // if its user's first encounter with this card - its ease and stage gonna be on 0
+                    // If its user's first encounter with this card - its 'ease' and 'stage' gonna be set on 0.
                     int ease = 1;
                     int stage = 0;
                     bool inRevisionLog = false;
@@ -156,7 +157,9 @@ namespace FlashcardsApp.Models
                     // Calculate values for new/updated revision record
                     DateTime newDate = this.CalcualteNextRevisionDate(stage, response);
                     int newStage = this.CalculateNewStage(stage, response);
-                    Console.WriteLine(newDate);
+
+                    // If this card was already in revisionLog,
+                    // update its values, as past information is no longer necessary.
                     if (inRevisionLog)
                     {
                         cmd = new SqlCommand(
@@ -164,6 +167,8 @@ namespace FlashcardsApp.Models
                             $"Date=DATETRUNC(day, @date), Ease={response}, Stage={newStage} " +
                             $"where UserId={userId} and DeckId={deckId} and CardId={cardId}", connection);
                     }
+                    // If this card is not in revisionLog then we need to create new record 
+                    // As its user's first experience with this card.
                     else
                     {
                         cmd = new SqlCommand(
@@ -186,12 +191,11 @@ namespace FlashcardsApp.Models
         /*
          * Get amount of cards that need to be revised today.
          * Shown in home's deck card.
+         * Return dictionary of deckId and amount of cards to revise for this particular user
          */
         public async Task<Dictionary<int, int>> GetReviseCardAmount(int userId)
         {
-            // Dictionary of deckId's and amount of cards to revise for this particular user
             Dictionary<int, int> CardsToReviseByDeck= new();
-
             try
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -216,6 +220,9 @@ namespace FlashcardsApp.Models
             }
         }
 
+        /*
+         * Schema for determining next revision date of a card, based on stage and current response.
+         */
         private DateTime CalcualteNextRevisionDate(int stage, int response)
         {
             if (response == 1)
@@ -226,7 +233,9 @@ namespace FlashcardsApp.Models
                 return DateTime.Now.AddDays(days);
             }
         }
-
+        /*
+         * Calculate new stage, depending on current stage (user's fluency of this card) and current response.
+         */
         private int CalculateNewStage(int stage, int response)
         {
             if (response == 0)

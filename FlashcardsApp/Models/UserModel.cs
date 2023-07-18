@@ -1,5 +1,4 @@
 ﻿using FlashcardsApp.Dtos;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -14,6 +13,9 @@ namespace FlashcardsApp.Models
             _connectionString = connectionString;
         }
     
+        /*
+         * Get information about all decks owned by particular user.
+         */
         public async Task<List<DeckDto>> GetUsersDeckInfo(int userId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -42,6 +44,9 @@ namespace FlashcardsApp.Models
             }
         }
 
+        /*
+         * Get deck which is said to be public.
+         */
         public async Task<IResult> AcquirePublicDeck(int userId, int deckId)
         {
             try

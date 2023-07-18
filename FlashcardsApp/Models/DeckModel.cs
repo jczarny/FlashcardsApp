@@ -1,11 +1,6 @@
 ﻿using FlashcardsApp.Dtos;
-using FlashcardsApp.Entities;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Reflection.PortableExecutable;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FlashcardsApp.Models
 {
@@ -17,10 +12,15 @@ namespace FlashcardsApp.Models
             _connectionString = connectionString;
         }
 
+        /* Creates deck with userId as his owner.
+         * Returns true if succeeded.
+         */
         public async Task<bool> CreateDeck(NewDeckDto deck, int userId)
         {
             try
             {
+                // Using stored procedure, which adds deck record to Decks table
+                // and also to UserDecks to set this deck as owned by this user.
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     SqlCommand cmd = new SqlCommand("spDeck_Create", connection);
@@ -39,7 +39,10 @@ namespace FlashcardsApp.Models
             }
         }
 
-        // Get the deck info with checking if user really owns this deck
+        /*
+         * Get information about deck.
+         * userId is used to check if he's the owner or not.
+         */
         public async Task<DeckDto> GetDeckInfo(int deckId, int userId)
         {
             try
@@ -52,6 +55,7 @@ namespace FlashcardsApp.Models
 
                     await connection.OpenAsync();
                     SqlDataReader reader = cmd.ExecuteReader();
+
                     reader.Read();
                     if (reader.IsDBNull("Id"))
                         throw new ArgumentException("This user does not have such deck");
@@ -74,7 +78,10 @@ namespace FlashcardsApp.Models
                 throw;
             }
         }
-
+        
+        /*
+         * Get deck's cards.
+         */
         public async Task<List<CardDto>> GetDeckCards(int deckId)
         {
             List<CardDto> cards = new();
@@ -108,6 +115,9 @@ namespace FlashcardsApp.Models
             }
         }
 
+        /*
+         * Get all decks that are marked as public.
+         */
         public async Task<List<DeckDto>> GetPublicDecks(int userId)
         {
             List<DeckDto> decks = new List<DeckDto>();
@@ -136,6 +146,9 @@ namespace FlashcardsApp.Models
             } catch { throw; }
         }
     
+        /*
+         *  Adds card to deck.
+         */
         public async Task<object> AddCardToDeck(CardDto card)
         {
             try
@@ -163,6 +176,9 @@ namespace FlashcardsApp.Models
             }
         }
     
+        /*
+         * Deletes card by its id.
+         */
         public async Task<bool> DeleteCardFromDeck(int cardId)
         {
             try
@@ -179,6 +195,10 @@ namespace FlashcardsApp.Models
             catch { throw; }
         }
 
+        /*
+         * Deletes deck if userId is its owner, or just removes it from acquired if its not his.
+         * Cards and RevisionLogs are cascaded automatically.
+         */
         public async Task<bool> DeleteDeck(int userId, int deckId)
         {
             try
@@ -203,6 +223,9 @@ namespace FlashcardsApp.Models
             }
         }
 
+        /*
+         * Publish deck if its possible.
+         */
         public async Task<bool> PublishDeck(int deckId)
         {
             try

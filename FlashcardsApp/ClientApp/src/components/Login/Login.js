@@ -21,7 +21,7 @@ export default function Login() {
             password: password
         })
             .then(res => {
-                setAccessToken(res.data.accessToken)
+                setAccessToken(res.data.AccessToken)
                 setIsLoggedIn(true)
                 setIsPending(false)
                 navigate('/')

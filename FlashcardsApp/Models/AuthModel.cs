@@ -1,14 +1,5 @@
-﻿using Azure.Core;
-using Azure.Identity;
-using FlashcardsApp.Dtos;
+﻿using FlashcardsApp.Dtos;
 using FlashcardsApp.Entities;
-using FlashcardsApp.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,26 +8,30 @@ using System.Text.RegularExpressions;
 
 namespace FlashcardsApp.Models
 {
-    public class Auth
+    public class AuthModel
     {
         private readonly FlashcardsContext _context;
         private readonly IConfiguration _configuration;
 
-        public Auth(FlashcardsContext context, IConfiguration configuration)
+        public AuthModel(FlashcardsContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
         }
 
-        // given credentials create new user
-        public async Task<User> RegisterUser(UserDto userCreds)
+        // Given credentials, Create new user
+        public async Task<bool> RegisterUser(UserDto userCreds)
         {
+            // Check if such user already exists
             bool doesUserExists = CheckIfSuchUserExists(userCreds.Username, _context);
             if (doesUserExists) {
                 throw new ArgumentException("Such username already exists");
             }
 
+            // Prepare hashed password with its salt
             CreateHashPassword(userCreds.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            
+            // Prepare user record
             User newUser = new User
             {
                 Username = userCreds.Username,
@@ -45,9 +40,10 @@ namespace FlashcardsApp.Models
             };
             try
             {
+                // Add username to database
                 _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
-                return newUser;
+                return true;
             }
             catch
             {
@@ -55,9 +51,12 @@ namespace FlashcardsApp.Models
             }
         }
 
-        // Validate user credentials to login, return his userId and Access Token
+        /*  Validate user credentials to login
+         *  Return all necessary tokens
+         */
         public async Task<(string accessToken, RefreshToken refreshToken, UserIdToken userIdToken)> LoginUser(UserDto userCreds)
         {
+            // Check if such user even exists
             bool doesUserExists = CheckIfSuchUserExists(userCreds.Username, _context);
             if (!doesUserExists)
             {
@@ -65,13 +64,16 @@ namespace FlashcardsApp.Models
             }
             User foundUser = _context.Users.Where(o => o.Username == userCreds.Username).ToList()[0];
             
+            // Check his password
             bool isPwdCorrect = VerifyHashPassword(userCreds.Password, foundUser.PasswordHash, foundUser.PasswordSalt);
             if(isPwdCorrect)
             {
-                var token = CreateAccessToken(foundUser);
+                // Prepare all tokens
+                var accessToken = CreateAccessToken(foundUser);
                 var refreshToken = CreateRefreshToken();
                 var userIdToken = CreateUserIdToken(foundUser.Id.ToString());
 
+                // Prepare user record with his assigned refresh token
                 User refreshedUser = foundUser;
                 refreshedUser.RefreshToken = refreshToken.Token;
                 refreshedUser.TokenExpires = DateTime.Now.AddMinutes(5);
@@ -80,7 +82,7 @@ namespace FlashcardsApp.Models
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return (token, refreshToken, userIdToken);
+                    return (accessToken, refreshToken, userIdToken);
                 }
                 catch
                 {
@@ -93,6 +95,10 @@ namespace FlashcardsApp.Models
             }
         }
 
+        /*
+         * Logouts given user by clearing his refresh token
+         * Returns 1 if executed properly
+         */
         public async Task<int> LogoutUser(int userId)
         {
             var userList = _context.Users
@@ -116,8 +122,14 @@ namespace FlashcardsApp.Models
             }
         }
 
+        /*
+         * Refresh user's token.
+         * Happens everysingle database call to authenticate user and ensure safety.
+         * Returns new accessToken, refreshToken and same userIdToken but with stamped expiry date.
+         */
         public async Task<(string accessToken, RefreshToken refreshToken, UserIdToken userIdToken)> RefreshUserTokens(string currRefreshToken)
         {
+            // Authenticate user by checking if refresh token is valid
             var userList = _context.Users
                 .Where(o => o.RefreshToken == currRefreshToken).ToList();
 
@@ -129,10 +141,12 @@ namespace FlashcardsApp.Models
             if (user.TokenExpires < DateTime.Now)
                 throw new UnauthorizedAccessException("Token expired.");
 
+            // Prepare new tokens
             string accessToken = CreateAccessToken(user);
             var newRefreshToken = CreateRefreshToken();
             var newUserIdToken = CreateUserIdToken(user.Id.ToString());
 
+            // Update user record with new refresh token
             User refreshedUser = user;
             refreshedUser.RefreshToken = newRefreshToken.Token;
             refreshedUser.TokenExpires = DateTime.Now.AddMinutes(5);
@@ -149,7 +163,7 @@ namespace FlashcardsApp.Models
         }
 
 
-        // Create access token
+        // Create new access token
         private string CreateAccessToken(User user)
         {
             List<Claim> claims = new List<Claim>
@@ -215,6 +229,7 @@ namespace FlashcardsApp.Models
             }
         }
 
+        // Checks if user exists, used in login and register
         private bool CheckIfSuchUserExists(string username, FlashcardsContext dbcontext)
         {
             var userList = dbcontext.Users
@@ -225,6 +240,7 @@ namespace FlashcardsApp.Models
                 return false;
         }
 
+        // Validate user credentials (make sure they're identical with frontend validation)
         public int validateUserCredentials(UserDto user)
         {
             string regexUsername = "^[a-zA-Z0-9]([a-zA-Z0-9._]){3,18}[a-zA-Z0-9]$";

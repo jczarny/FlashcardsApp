@@ -1,16 +1,8 @@
-﻿using Azure.Core;
-using FlashcardsApp.Dtos;
+﻿using FlashcardsApp.Dtos;
 using FlashcardsApp.Entities;
 using FlashcardsApp.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.Data.Common;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 
 namespace FlashcardsApp.Controllers
 {
@@ -19,26 +11,33 @@ namespace FlashcardsApp.Controllers
     [EnableCors("_myAllowSpecificOrigins")]
     public class AuthController : ControllerBase
     {
-        private readonly Auth _auth;
+        private readonly AuthModel _auth;
 
         // Get db context and project config
         public AuthController(FlashcardsContext context, IConfiguration configuration)
         {
-            _auth = new Auth(context, configuration);
+            _auth = new AuthModel(context, configuration);
         }
 
         // Register with given username and password
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult<User>> Register([FromBody] UserDto request)
         {
+            // Validate input
+            if (request == null)
+                return BadRequest("Invalid request");
             int validationResult = _auth.validateUserCredentials(request);
             if (validationResult == 0)
-                return BadRequest();
+                return BadRequest("Invalid registration input");
 
             try
             {
-                User user = await _auth.RegisterUser(request);
-                return Ok(user);
+                // Register user in database
+                bool isSuccess = await _auth.RegisterUser(request);
+                if (isSuccess)
+                    return Ok();
+                else
+                    return BadRequest("Unexpected error happened while registering");
             }
             catch (Exception ex)
             {
@@ -53,22 +52,26 @@ namespace FlashcardsApp.Controllers
         }
 
         /*
-         * Login with given username and password, set http-only refresh token, 
-         * response with generated access token
+         * Login with given username and password, set http-only refresh token and userId token, 
+         * respond with generated access token.
          */
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserDto request)
+        public async Task<IActionResult> Login([FromBody] UserDto request)
         {
+            // Validate request
             int validationResult = _auth.validateUserCredentials(request);
             if (validationResult == 0)
                 return BadRequest();
 
             try
             {
-                var user = await _auth.LoginUser(request);
-                SetRefreshToken(user.refreshToken);
-                SetUserIdToken(user.userIdToken);
-                return Ok();
+                // Check credentials, prepare tokens
+                var tokens = await _auth.LoginUser(request);
+
+                // set http-only tokens and respond with access token
+                SetRefreshToken(tokens.refreshToken);
+                SetUserIdToken(tokens.userIdToken);
+                return Ok(new { AccessToken = tokens.accessToken });
             }
             catch (Exception ex)
             {
@@ -88,16 +91,19 @@ namespace FlashcardsApp.Controllers
 
         }
 
-        // Logout, clear user's refresh token.
+        // Logout, clear user's tokens.
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             try
             {
+                // Validate userId
                 var userIdString = Request.Cookies["userId"];
                 UserIdToken.ParseTokenToInt(userIdString, out int userId);
 
+                // Try logging out, invalidate refresh token in database
                 int result = await _auth.LogoutUser(userId);
+                // Delete client-side tokens
                 DeleteTokens();
                 return Ok();
             }
@@ -115,13 +121,14 @@ namespace FlashcardsApp.Controllers
 
         }
 
-        // Refresh refresh token
+        // Refresh all tokens
         // TODO: add client id&secret in order to filter db while checking refresh token
         [HttpPost("refresh-tokens")]
         public async Task<ActionResult<string>> RefreshTokens()
         {
             try
             {
+                // Validate tokens
                 var currRefreshToken = Request.Cookies["refreshToken"];
                 if (currRefreshToken == null)
                     return Unauthorized("No refresh token given");
@@ -129,6 +136,7 @@ namespace FlashcardsApp.Controllers
                 var currUserIdToken = Request.Cookies["userId"];
                 UserIdToken.ParseTokenToInt(currUserIdToken, out int userId); // just to validate id
 
+                // Check correctness of tokens and prepare new ones
                 var newTokens = await _auth.RefreshUserTokens(currRefreshToken);
                 SetRefreshToken(newTokens.refreshToken);
                 SetUserIdToken(newTokens.userIdToken);
@@ -170,6 +178,7 @@ namespace FlashcardsApp.Controllers
             Response.Cookies.Append("userId", userIdToken.Token, cookieOptions);
         }
 
+        // Delete client-side cookies
         private void DeleteTokens()
         {
             var cookieOptions = new CookieOptions

@@ -1,17 +1,9 @@
 ﻿using FlashcardsApp.Dtos;
-using FlashcardsApp.Entities;
 using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data;
 using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FlashcardsApp.Controllers
 {
@@ -34,6 +26,7 @@ namespace FlashcardsApp.Controllers
         [HttpGet, Authorize]
         public async Task<ActionResult<DeckDto>> GetDeck([FromQuery] string deckId)
         {
+            // Validate userId and deckId
             var userIdString = Request.Cookies["userId"];
             int userId;
             try
@@ -71,12 +64,11 @@ namespace FlashcardsApp.Controllers
         [HttpPost("create"), Authorize]
         public async Task<IActionResult> CreateDeck([FromBody] NewDeckDto deck)
         {
-            // validate deck data
+            // Validate deck data and user id
             bool isValid = ValidateNewDeckDto(deck);
             if (isValid is false)
                 return BadRequest();
 
-            // validate userId
             var userIdString = Request.Cookies["userId"];
             int userId;
             try
@@ -89,6 +81,7 @@ namespace FlashcardsApp.Controllers
 
             try
             {
+                // Try creating deck in database
                 bool isCorrect = await _deckModel.CreateDeck(deck, userId);
                 if(isCorrect)
                     return Ok();
@@ -108,10 +101,11 @@ namespace FlashcardsApp.Controllers
 
             try
             {
-                // validate userId
+                // Validate userId
                 var userIdString = Request.Cookies["userId"];
                 UserIdToken.ParseTokenToInt(userIdString, out int userId);
 
+                // Get public decks from database
                 List<DeckDto> decks = await _deckModel.GetPublicDecks(userId);
                 string json = JsonSerializer.Serialize(decks);
                 return Ok(json);
@@ -124,8 +118,9 @@ namespace FlashcardsApp.Controllers
 
         // Add card to a deck, return id of new card
         [HttpPost("addcard"), Authorize]
-        public async Task<ActionResult<int>> AddCard(CardDto card)
+        public async Task<ActionResult<int>> AddCard([FromBody] CardDto card)
         {
+            // Validate card input
             bool result = ValidateCardDto(card);
             if (result is false)
                 return BadRequest("Invalid card values");
@@ -133,6 +128,7 @@ namespace FlashcardsApp.Controllers
             string json = "";
             try
             {
+                // Try adding card to deck in database
                 var cardId = await _deckModel.AddCardToDeck(card);
                 json = JsonSerializer.Serialize(cardId);
                 return Ok(json);
@@ -145,8 +141,9 @@ namespace FlashcardsApp.Controllers
 
         // Delete card from a deck
         [HttpDelete("card"), Authorize]
-        public async Task<IActionResult> DeleteCard(string id)
+        public async Task<IActionResult> DeleteCard([FromQuery] string id)
         {
+            // Validate cardId
             bool isIdInt = int.TryParse(id, out int cardId);
             if (!isIdInt)
             {
@@ -155,6 +152,7 @@ namespace FlashcardsApp.Controllers
 
             try
             {
+                // Try deleting card from deck in database
                 bool isCorrect = await _deckModel.DeleteCardFromDeck(cardId);
                 if (isCorrect)
                     return Ok();
@@ -169,8 +167,9 @@ namespace FlashcardsApp.Controllers
 
         // Delete deck
         [HttpDelete, Authorize]
-        public async Task<IActionResult> DeleteDeck(string id)
+        public async Task<IActionResult> DeleteDeck([FromQuery] string id)
         {
+            // Validate userId and deckId
             var userIdString = Request.Cookies["userId"];
             int userId;
             try
@@ -190,6 +189,7 @@ namespace FlashcardsApp.Controllers
 
             try
             {
+                // Try deleting deck from database
                 var isCorrect = await _deckModel.DeleteDeck(userId, deckId);
 
                 if(isCorrect) 
@@ -206,8 +206,9 @@ namespace FlashcardsApp.Controllers
 
         // Make deck public (available to use for everyone)
         [HttpPatch("publish"), Authorize]
-        public async Task<IActionResult> PublishDeck(string id)
+        public async Task<IActionResult> PublishDeck([FromQuery] string id)
         {
+            // Validate deckId 
             bool isIdInt = int.TryParse(id, out int deckId);
             if (!isIdInt)
             {
@@ -216,6 +217,7 @@ namespace FlashcardsApp.Controllers
 
             try
             {
+                // Try changing deck's value isPublic from 0 to 1 in database
                 var isCorrect = await _deckModel.PublishDeck(deckId);
                 if (isCorrect) 
                     return Ok();

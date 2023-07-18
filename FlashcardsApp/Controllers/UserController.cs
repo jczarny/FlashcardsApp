@@ -1,17 +1,9 @@
 ﻿using FlashcardsApp.Dtos;
-using FlashcardsApp.Entities;
 using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Data;
-using System.Net.Http.Json;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Xml;
 
 namespace FlashcardsApp.Controllers
 {
@@ -38,15 +30,18 @@ namespace FlashcardsApp.Controllers
 
             try
             {
+                // Validation
                 var userIdString = Request.Cookies["userId"];
                 UserIdToken.ParseTokenToInt(userIdString, out int userId);
 
-
+                // Get decks information
                 List<DeckDto> decks = await _userModel.GetUsersDeckInfo(userId);
 
+                // Get amount of cards to revise from each deck
                 LearnModel learnModel = new LearnModel(_connectionString);
                 Dictionary<int, int> deckIdAmountPairs = await learnModel.GetReviseCardAmount(userId);
 
+                // Merge the deck info with amount of cards to revise
                 for (int i = 0; i < decks.Count; i++)
                 {
                     bool isDeckInLog = deckIdAmountPairs.TryGetValue(decks[i].Id, out int amount);
@@ -66,9 +61,13 @@ namespace FlashcardsApp.Controllers
             }
         }
 
+        /*
+         * Acquire public deck from deck browser.
+         */
         [HttpPost("acquire"), Authorize]
         public async Task<IActionResult> Acquire([FromQuery] string id)
         {
+            // Validation of deckId and userId 
             if (id == null)
             {
                 return BadRequest("No deck specified");
@@ -84,6 +83,7 @@ namespace FlashcardsApp.Controllers
                 var userIdString = Request.Cookies["userId"];
                 UserIdToken.ParseTokenToInt(userIdString, out int userId);
 
+                // Note in database the acquisition
                 await _userModel.AcquirePublicDeck(userId, deckId);
                 return Ok();
             }
