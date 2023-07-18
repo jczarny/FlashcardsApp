@@ -128,10 +128,21 @@ namespace FlashcardsApp.Controllers
             string json = "";
             try
             {
+                // Validate userId
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
                 // Try adding card to deck in database
-                var cardId = await _deckModel.AddCardToDeck(card);
-                json = JsonSerializer.Serialize(cardId);
-                return Ok(json);
+                string cardId = await _deckModel.AddCardToDeck(card, userId);
+                if(Int32.Parse(cardId) >= 0)
+                {
+                    json = JsonSerializer.Serialize(cardId);
+                    return Ok(json);
+                }
+                else
+                {
+                    return BadRequest("User does not own this deck");
+                }
             }
             catch (Exception ex)
             {
@@ -152,8 +163,12 @@ namespace FlashcardsApp.Controllers
 
             try
             {
+                // Validate userId
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
                 // Try deleting card from deck in database
-                bool isCorrect = await _deckModel.DeleteCardFromDeck(cardId);
+                bool isCorrect = await _deckModel.DeleteCardFromDeck(cardId, userId);
                 if (isCorrect)
                     return Ok();
                 else
@@ -217,8 +232,12 @@ namespace FlashcardsApp.Controllers
 
             try
             {
+                // Validate userId
+                var userIdString = Request.Cookies["userId"];
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
+
                 // Try changing deck's value isPublic from 0 to 1 in database
-                var isCorrect = await _deckModel.PublishDeck(deckId);
+                var isCorrect = await _deckModel.PublishDeck(deckId, userId);
                 if (isCorrect) 
                     return Ok();
                 else 

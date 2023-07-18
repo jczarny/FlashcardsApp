@@ -148,8 +148,9 @@ namespace FlashcardsApp.Models
     
         /*
          *  Adds card to deck.
+         *  Returns Id of added card, or -1 if user does not own deck to which he want add card to.
          */
-        public async Task<object> AddCardToDeck(CardDto card)
+        public async Task<string> AddCardToDeck(CardDto card, int userId)
         {
             try
             {
@@ -157,6 +158,7 @@ namespace FlashcardsApp.Models
                 {
                     SqlCommand cmd = new SqlCommand("spCard_Add", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.Add(new SqlParameter("@UserId", userId));
                     cmd.Parameters.Add(new SqlParameter("@DeckId", card.DeckId));
                     cmd.Parameters.Add(new SqlParameter("@Front", card.Front));
                     cmd.Parameters.Add(new SqlParameter("@Reverse", card.Reverse));
@@ -167,7 +169,7 @@ namespace FlashcardsApp.Models
 
                     using (var rdr = cmd.ExecuteReader())
                     {
-                        return p1.Value;
+                        return p1.Value.ToString() ?? "-1";
                     }
                 }
             } catch
@@ -179,14 +181,21 @@ namespace FlashcardsApp.Models
         /*
          * Deletes card by its id.
          */
-        public async Task<bool> DeleteCardFromDeck(int cardId)
+        public async Task<bool> DeleteCardFromDeck(int cardId, int userId)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand($"delete from cards where id = {cardId}", connection);
+                    SqlCommand cmd = new SqlCommand($"select * from cards c join decks d on c.DeckId = d.id where CreatorId={userId} and c.Id={cardId};", connection);
                     await connection.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    reader.Read();
+                    if (reader.IsDBNull("Front"))
+                        throw new ArgumentException("User does not own this deck");
+                    reader.Close();
+
+                    cmd = new SqlCommand($"delete from cards where id = {cardId}", connection);
                     cmd.ExecuteReader();
 
                     return true;
@@ -226,14 +235,21 @@ namespace FlashcardsApp.Models
         /*
          * Publish deck if its possible.
          */
-        public async Task<bool> PublishDeck(int deckId)
+        public async Task<bool> PublishDeck(int deckId, int userId)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
-                    SqlCommand cmd = new SqlCommand("update decks set isPrivate=0 where Id=" + deckId, connection);
+                    SqlCommand cmd = new SqlCommand($"select * from decks where CreatorId={userId}", connection);
                     await connection.OpenAsync();
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    reader.Read();
+                    if (reader.IsDBNull("Id"))
+                        throw new ArgumentException("User is not creator of this deck");
+                    reader.Close();
+
+                    cmd = new SqlCommand("update decks set isPrivate=0 where Id=" + deckId, connection);
                     cmd.ExecuteReader();
 
                     return true;
