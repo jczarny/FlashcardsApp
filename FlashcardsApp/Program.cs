@@ -1,4 +1,6 @@
 using FlashcardsApp;
+using FlashcardsApp.Interfaces;
+using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -31,6 +33,8 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<FlashcardsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SQLServer")));
 
+builder.Services.AddSingleton<IFlashcardsRepository>
+    (x => new FlashcardsRepository(builder.Configuration.GetConnectionString("SQLServer")!));
 
 // Configure JWS authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

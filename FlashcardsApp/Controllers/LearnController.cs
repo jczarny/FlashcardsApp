@@ -1,4 +1,5 @@
 ﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Interfaces;
 using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -13,12 +14,11 @@ namespace FlashcardsApp.Controllers
     public class LearnController : ControllerBase
     {
         private readonly string _connectionString;
-        private readonly LearnModel _learnModel;
-        public LearnController(IConfiguration configuration)
+        private readonly ILearnModel _learnModel;
+        public LearnController(IConfiguration configuration, IFlashcardsRepository repo)
         {
 
-            _connectionString = configuration.GetConnectionString("SQLServer")!;
-            _learnModel = new LearnModel(_connectionString);
+            _learnModel = repo._learnModel;
         }
 
         /*

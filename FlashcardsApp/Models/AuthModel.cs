@@ -1,5 +1,6 @@
 ﻿using FlashcardsApp.Dtos;
 using FlashcardsApp.Entities;
+using FlashcardsApp.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace FlashcardsApp.Models
 {
-    public class AuthModel
+    public class AuthModel : IAuthModel
     {
         private readonly FlashcardsContext _context;
         private readonly IConfiguration _configuration;

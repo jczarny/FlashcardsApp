@@ -1,10 +1,11 @@
 ﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace FlashcardsApp.Models
 {
-    public class UserModel
+    public class UserModel : IUserModel
     {
         public readonly string _connectionString;
 

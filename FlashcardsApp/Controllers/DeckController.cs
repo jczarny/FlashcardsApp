@@ -1,4 +1,5 @@
 ﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Interfaces;
 using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -13,13 +14,14 @@ namespace FlashcardsApp.Controllers
     public class DeckController : ControllerBase
     {
         private readonly string _connectionString;
-        private readonly DeckModel _deckModel;
+        private readonly IDeckModel _deckModel;
 
         // Get db context, project config and connection string
-        public DeckController(IConfiguration configuration)
+        public DeckController(IConfiguration configuration, IFlashcardsRepository repo)
         {
             _connectionString = configuration.GetConnectionString("SQLServer")!;
-            _deckModel = new DeckModel(_connectionString);
+            _deckModel = repo._deckModel;
+            
         }
 
         // Get user's deck by its id
@@ -70,25 +72,17 @@ namespace FlashcardsApp.Controllers
                 return BadRequest();
 
             var userIdString = Request.Cookies["userId"];
-            int userId;
             try
             {
-                UserIdToken.ParseTokenToInt(userIdString, out userId);
-            } catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+                UserIdToken.ParseTokenToInt(userIdString, out int userId);
 
-            try
-            {
                 // Try creating deck in database
                 bool isCorrect = await _deckModel.CreateDeck(deck, userId);
-                if(isCorrect)
+                if (isCorrect)
                     return Ok();
                 else
                     return BadRequest();
-            }
-            catch (Exception ex)
+            } catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

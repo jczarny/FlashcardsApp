@@ -1,10 +1,11 @@
 ﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace FlashcardsApp.Models
 {
-    public class LearnModel
+    public class LearnModel : ILearnModel
     {
         // Depending on stage the card is in (which depends on previous user's results)
         // evaluate when should be the card revised (in days)

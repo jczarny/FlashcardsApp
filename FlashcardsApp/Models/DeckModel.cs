@@ -1,10 +1,11 @@
 ﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Interfaces;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
 namespace FlashcardsApp.Models
 {
-    public class DeckModel
+    public class DeckModel : IDeckModel
     {
         public static string? _connectionString { get; set; }
         public DeckModel(string connectionString)

@@ -1,4 +1,5 @@
 ﻿using FlashcardsApp.Dtos;
+using FlashcardsApp.Interfaces;
 using FlashcardsApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -12,13 +13,13 @@ namespace FlashcardsApp.Controllers
     [EnableCors("_myAllowSpecificOrigins")]
     public class UserController : ControllerBase
     {
-        private readonly UserModel _userModel;
+        private readonly IUserModel _userModel;
         private readonly string _connectionString;
-        public UserController(IConfiguration configuration)
+        public UserController(IConfiguration configuration, IFlashcardsRepository repo)
         {
 
             _connectionString = configuration.GetConnectionString("SQLServer")!;
-            _userModel = new UserModel(_connectionString);
+            _userModel = repo._userModel;
         }
 
         /*
