@@ -14,12 +14,15 @@ namespace FlashcardsApp.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserModel _userModel;
+        private readonly ILearnModel _learnModel;
         private readonly string _connectionString;
+
         public UserController(IConfiguration configuration, IFlashcardsRepository repo)
         {
 
             _connectionString = configuration.GetConnectionString("SQLServer")!;
             _userModel = repo._userModel;
+            _learnModel = repo._learnModel;
         }
 
         /*
@@ -39,8 +42,7 @@ namespace FlashcardsApp.Controllers
                 List<DeckDto> decks = await _userModel.GetUsersDeckInfo(userId);
 
                 // Get amount of cards to revise from each deck
-                LearnModel learnModel = new LearnModel(_connectionString);
-                Dictionary<int, int> deckIdAmountPairs = await learnModel.GetReviseCardAmount(userId);
+                Dictionary<int, int> deckIdAmountPairs = await _learnModel.GetReviseCardAmount(userId);
 
                 // Merge the deck info with amount of cards to revise
                 for (int i = 0; i < decks.Count; i++)

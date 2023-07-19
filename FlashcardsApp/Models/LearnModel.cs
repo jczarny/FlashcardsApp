@@ -129,7 +129,7 @@ namespace FlashcardsApp.Models
          * Evaluate user's knowledge depending on its response now and historical responses.
          * Returns 1 if it evaluates successfully.
          */
-        public async Task<int> EvaluateResult(int userId, int cardId, int deckId, int response)
+        public async Task<bool> EvaluateResult(int userId, int cardId, int deckId, int response)
         {
             try
             {
@@ -181,7 +181,7 @@ namespace FlashcardsApp.Models
                     reader = cmd.ExecuteReader();
                     reader.Close();
 
-                    return 1;
+                    return true;
                 }
             }
             catch

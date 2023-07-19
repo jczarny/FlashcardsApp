@@ -1,7 +1,7 @@
 ﻿namespace FlashcardsApp.Dtos
 {
     public class DeckDto
-    {
+    { 
         // Id of deck in database
         public int Id { get; set; }
         // Amount of cards to revise by a certain user (unrequired)

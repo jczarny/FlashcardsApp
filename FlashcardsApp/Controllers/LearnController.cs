@@ -13,11 +13,9 @@ namespace FlashcardsApp.Controllers
     [EnableCors("_myAllowSpecificOrigins")]
     public class LearnController : ControllerBase
     {
-        private readonly string _connectionString;
         private readonly ILearnModel _learnModel;
         public LearnController(IConfiguration configuration, IFlashcardsRepository repo)
         {
-
             _learnModel = repo._learnModel;
         }
 
@@ -34,9 +32,16 @@ namespace FlashcardsApp.Controllers
                 var userIdString = Request.Cookies["userId"];
                 UserIdToken.ParseTokenToInt(userIdString, out int userId);
 
-                int result = await _learnModel.EvaluateResult(
+                bool isSuccess = await _learnModel.EvaluateResult(
                     userId, learnData.CardId, learnData.DeckId, learnData.Response);
-                return Ok();
+                if (isSuccess)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
             } catch
             {
                 return BadRequest("Unknown error in card knowledge evaluation");
@@ -57,24 +62,21 @@ namespace FlashcardsApp.Controllers
             try
             {
                 UserIdToken.ParseTokenToInt(userIdString, out userId);
+
+                // Get cards from database
+                List<CardDto> cards = await _learnModel.GetLearningCards(userId, deckId, amount);
+
+                string json = JsonSerializer.Serialize(cards);
+
+                // If no suitable cards were found, respond with empty Ok
+                if (cards.Count != 0)
+                    return Ok(json);
+                else
+                    return Ok("");
+
             } catch (Exception ex)
             {
                 return BadRequest(ex.Message);
-            }
-
-            // Get cards from database
-            List<CardDto> cards = await _learnModel.GetLearningCards(userId, deckId, amount);
-
-            string json = JsonSerializer.Serialize(cards);
-
-            // If no suitable cards were found, respond with empty Ok
-            if (cards.Count != 0)
-            {
-                return Ok(json);
-            }
-            else
-            {
-                return Ok();
             }
         }
     

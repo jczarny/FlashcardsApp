@@ -39,7 +39,8 @@ namespace FlashcardsApp.Controllers
                 return BadRequest(ex.Message);
             }
 
-            bool isIdInt = int.TryParse(deckId, out int deckIdInt);
+            int deckIdInt;
+            bool isIdInt = int.TryParse(deckId, out deckIdInt);
             if (!isIdInt)
             {
                 return BadRequest();
@@ -149,7 +150,8 @@ namespace FlashcardsApp.Controllers
         public async Task<IActionResult> DeleteCard([FromQuery] string id)
         {
             // Validate cardId
-            bool isIdInt = int.TryParse(id, out int cardId);
+            int cardId;
+            bool isIdInt = int.TryParse(id, out cardId);
             if (!isIdInt)
             {
                 return BadRequest();
@@ -188,9 +190,9 @@ namespace FlashcardsApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
 
-            bool isIdInt = int.TryParse(id, out int deckId);
+            int deckId;
+            bool isIdInt = int.TryParse(id, out deckId);
             if (!isIdInt)
             {
                 return BadRequest();
