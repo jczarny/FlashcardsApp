@@ -94,8 +94,8 @@ export default function AddCard({ deckId, handleAdd }) {
     }
 
     return (
-        <>
-            <div className="card m-5">
+        <div className="cardContainer p-1">
+            <div className="card m-3">
                 <div className="card-header">
                     New card
                 </div>
@@ -169,6 +169,6 @@ export default function AddCard({ deckId, handleAdd }) {
                     }
                 </div>
             </div>
-        </>
+        </div>
     )
 }

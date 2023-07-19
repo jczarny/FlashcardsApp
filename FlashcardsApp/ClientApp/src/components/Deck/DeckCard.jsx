@@ -10,7 +10,7 @@ export default function DeckCard({ title, description, id, amountToRevise, handl
     }
     return (
         <>
-            { id >= 0 &&
+            {id >= 0 && 
                 <div className="card">
                     <div className="card-body">
                         <h5 className="card-title">{title}</h5>
@@ -20,10 +20,10 @@ export default function DeckCard({ title, description, id, amountToRevise, handl
                             <button onClick={() => { handleEdit(id) }} type="button" className="btn btn-primary btn-block mb-4">Edit</button>
                         </div>
                         {amountToRevise === 0 &&
-                            <div>No cards to revise today!</div>
+                            <div className="alert alert-success">No cards to revise today!</div>
                         }
                         {amountToRevise !== 0 &&
-                            <div>{amountToRevise} cards need a revision!</div>
+                            <div className="alert alert-danger">{amountToRevise} cards need a revision!</div>
                         }
                     </div>
                 </div>
@@ -31,11 +31,11 @@ export default function DeckCard({ title, description, id, amountToRevise, handl
             {
                 id === -1 &&
                 <div className="card">
-                    <div className="card-body">
+                        <div className="card-body d-flex flex-column justify-content-center">
                         <h5 className="card-title">Browse</h5>
                         <p className="card-text">Get more decks from other users!</p>
                         <div className="d-flex flex-row bd-highlight justify-content-center">
-                            <button onClick={() => { navigateToBrowse() }} type="button" className="btn btn-primary btn-block mb-4 me-2">Browse</button>
+                            <button onClick={() => { navigateToBrowse() }} type="button" className="btn btn-primary btn-block">Browse</button>
                         </div>
                     </div>
                 </div>

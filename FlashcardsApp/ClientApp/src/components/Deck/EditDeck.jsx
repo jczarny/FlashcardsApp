@@ -129,7 +129,7 @@ export default function EditDeck() {
         <>
             <h1>{deck.Title + isOwner}</h1>
 
-            <h3> Manage deck </h3>
+            <h3 className="border p-3"> <div>Manage deck</div> <br/>
             {
                 deck.isPrivate &&
                 <button type="button" onClick={() => handlePublish()} className="btn btn-bg btn-primary me-2">Make public</button>
@@ -137,9 +137,10 @@ export default function EditDeck() {
             {
                 !deck.isPrivate &&
                 <button type="button" className="btn btn-bg btn-primary me-3" disabled>Make public</button>
-            }
+                }
             <button onClick={() => handleDeleteDeck()} className="btn btn-bg btn-primary me-2"> Delete deck </button>
-            {infoMsg && <div>{infoMsg}</div>}
+                {infoMsg && <div>{infoMsg}</div>}
+            </h3>
 
             {
                 deck.IsOwner && 
@@ -152,6 +153,7 @@ export default function EditDeck() {
                 </>
             }
 
+            <div className="border p-3 m-3">
             {
                 chosenCategory === categories.NEW &&
                 <div className="mt-4">
@@ -163,7 +165,8 @@ export default function EditDeck() {
                 <div className="mt-4">
                     <CardList title="All cards" cards={allCards} HandleDelete={handleDeleteCard} deleteMsg={deleteMsg} />
                 </div>
-            }
+                }
+            </div>
         </>
     )
 }

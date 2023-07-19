@@ -136,10 +136,10 @@ export default function Learn() {
                                         <div> {cardsQueue[0].Description}</div>
                                     </div>
                                     <div className="card-footer">
-                                        <button onClick={() => handleSubmit(1)} className="btn btn-primary">Again (1)</button>
-                                        <button onClick={() => handleSubmit(2)} className="btn btn-primary">Hard (2)</button>
-                                        <button onClick={() => handleSubmit(3)} className="btn btn-primary">Medium (3)</button>
-                                        <button onClick={() => handleSubmit(4)} className="btn btn-primary">Easy (4)</button>
+                                        <button onClick={() => handleSubmit(1)} className="btn btn-danger">Again (1)</button>
+                                        <button onClick={() => handleSubmit(2)} className="btn btn-warning">Hard (2)</button>
+                                        <button onClick={() => handleSubmit(3)} className="btn btn-info">Medium (3)</button>
+                                        <button onClick={() => handleSubmit(4)} className="btn btn-success">Easy (4)</button>
                                     </div>
                                 </>
                             }
