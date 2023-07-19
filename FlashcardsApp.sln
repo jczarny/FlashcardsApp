@@ -5,7 +5,9 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashcardsApp", "FlashcardsApp\FlashcardsApp.csproj", "{8FCE8226-4A14-41B4-A1FA-154D089AAF63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlashcardsApp.Test", "FlashcardsApp.Test\FlashcardsApp.Test.csproj", "{BF76D799-8AD0-4305-A935-3BD3E91F840A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlashcardsApp.Test", "FlashcardsApp.Test\FlashcardsApp.Test.csproj", "{BF76D799-8AD0-4305-A935-3BD3E91F840A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocFx", "DocFx\DocFx.csproj", "{A025F1BE-A19A-412F-8ADE-2EED2F763297}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BF76D799-8AD0-4305-A935-3BD3E91F840A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF76D799-8AD0-4305-A935-3BD3E91F840A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF76D799-8AD0-4305-A935-3BD3E91F840A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A025F1BE-A19A-412F-8ADE-2EED2F763297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A025F1BE-A19A-412F-8ADE-2EED2F763297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A025F1BE-A19A-412F-8ADE-2EED2F763297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A025F1BE-A19A-412F-8ADE-2EED2F763297}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

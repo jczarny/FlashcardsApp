@@ -1,27 +1,45 @@
 ﻿namespace FlashcardsApp.Models
 {
-    /*
-     * Class merging card data with metrics depicting learning process.
-     */
+    /// <summary>
+    /// Class merging card data with metrics depicting learning process.
+    /// </summary>
     public class Learn
     {
-        // Card id in database
+        /// <summary>
+        /// Card's id in database.
+        /// </summary>
         public int CardId { get; set; }
-        // Learning user
+        /// <summary>
+        /// Id of learning user.
+        /// </summary>
         public int? UserId { get; set; }
-        // Deck id in database
+        /// <summary>
+        /// Id of deck in database.
+        /// </summary>
         public int DeckId { get; set; }
-        // Date of presumably next revision of card
+        /// <summary>
+        /// Date of presumably next revision of card.
+        /// </summary>
         public DateTime? Date { get; set; }
-        // Value depicting this user's previous response about this card of cardId
+        /// <summary>
+        /// Value depicting this user's previous response about this card.
+        /// </summary>
         public int? Ease { get; set; }
-        // Value depicting proficiency in this card
+        /// <summary>
+        /// Value depicting proficiency in this card.
+        /// </summary>
         public int? Stage { get; set; }
-        // Card's front text
+        /// <summary>
+        /// Card's front text.
+        /// </summary>
         public string Front { get; set; } = string.Empty;
-        // Card's reverse text
+        /// <summary>
+        /// Card's reverse text.
+        /// </summary>
         public string Reverse { get; set; } = string.Empty;
-        // Card's description
+        /// <summary>
+        /// Card's description.
+        /// </summary>
         public string Description { get; set; } = string.Empty;
     }
 }

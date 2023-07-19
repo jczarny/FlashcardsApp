@@ -8,15 +8,27 @@ using System.Text.Json;
 
 namespace FlashcardsApp.Controllers
 {
+    /// <summary>
+    /// Class <c>DeckController</c> filled with endpoints concerening deck management.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [EnableCors("_myAllowSpecificOrigins")]
     public class DeckController : ControllerBase
     {
         private readonly string _connectionString;
+        /// <summary>
+        /// Model containing database queries concerning deck management.
+        /// </summary>
         private readonly IDeckModel _deckModel;
 
-        // Get db context, project config and connection string
+        /// <summary>
+        /// Constructor injecting dependency of: \
+        /// - repository for commissioning database calls, \
+        /// - configuration for acquiring connectionString which might come in handy.
+        /// </summary>
+        /// <param name="configuration">Configuration stored in appsettings.json</param>
+        /// <param name="repo">Repository containing all database queries.</param>
         public DeckController(IConfiguration configuration, IFlashcardsRepository repo)
         {
             _connectionString = configuration.GetConnectionString("SQLServer")!;
@@ -24,7 +36,12 @@ namespace FlashcardsApp.Controllers
             
         }
 
-        // Get user's deck by its id
+        /// <summary>
+        /// Function <c>GetDeck</c> gets deck info by its id, if this particular authenticated user owns it.
+        /// </summary>
+        /// <param name="deckId">Id of deck stored in database.</param>
+        /// <returns> Returns, if successful, Ok() with whole deck information including its cards. \
+        /// Otherwise BadRequest(400) with adequate message. </returns>
         [HttpGet, Authorize]
         public async Task<ActionResult<DeckDto>> GetDeck([FromQuery] string deckId)
         {
@@ -63,7 +80,11 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Create deck with given title and description
+        /// <summary>
+        /// Function <c>CreateDeck</c> creates deck with given title and description.
+        /// </summary>
+        /// <param name="deck">Its title and description.</param>
+        /// <returns> Returns Ok() if successful, otherwise BadRequest(400).</returns>
         [HttpPost("create"), Authorize]
         public async Task<IActionResult> CreateDeck([FromBody] NewDeckDto deck)
         {
@@ -89,7 +110,10 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Get all public decks within db
+        /// <summary>
+        /// Function <c>GetPublicDecks</c> gets all public decks withing database. (have isPrivate set on 0)
+        /// </summary>
+        /// <returns>Returns list of public decks.</returns>
         [HttpGet("getPublic"), Authorize]
         public async Task<ActionResult<List<DeckDto>>> GetPublicDecks()
         {
@@ -111,9 +135,14 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Add card to a deck, return id of new card
+        /// <summary>
+        /// Function <c>AddCard</c> adds card to a deck, if deck exists and user is allowed to.
+        /// </summary>
+        /// <param name="card">Card information, which is id of deck this card is added to, front, reverse and description.</param>
+        /// <returns>Returns Ok() containing new card's Id when successful. /
+        /// Otherwise BadRequest(400) with adequate message.</returns>
         [HttpPost("addcard"), Authorize]
-        public async Task<ActionResult<int>> AddCard([FromBody] CardDto card)
+        public async Task<ActionResult<string>> AddCard([FromBody] CardDto card)
         {
             // Validate card input
             bool result = ValidateCardDto(card);
@@ -145,7 +174,12 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Delete card from a deck
+        /// <summary>
+        /// Function <c>DeleteCard</c> deletes card from deck if deck exists and user is allowed to.
+        /// </summary>
+        /// <param name="id">Id of a to-be-deleted card.</param>
+        /// <returns>Returns Ok() when successful, /
+        /// BadRequest(400) otherwise.</returns>
         [HttpDelete("card"), Authorize]
         public async Task<IActionResult> DeleteCard([FromQuery] string id)
         {
@@ -176,7 +210,13 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Delete deck
+        /// <summary>
+        /// Function <c>DeleteDeck</c> deletes deck in two particular ways: \
+        /// - If user is creator of this deck, delete it globally. \
+        /// - If user acquired it from public decks, delete it personally.
+        /// </summary>
+        /// <param name="id">Id of a to-be-deleted deck.</param>
+        /// <returns>Returns Ok() when succssful.</returns>
         [HttpDelete, Authorize]
         public async Task<IActionResult> DeleteDeck([FromQuery] string id)
         {
@@ -215,7 +255,12 @@ namespace FlashcardsApp.Controllers
 
         }
 
-        // Make deck public (available to use for everyone)
+        /// <summary>
+        /// Function <c>PublishDeck</c> makes deck public (available to use for everyone).
+        /// </summary>
+        /// <param name="id">Id of a deck to be made public.</param>
+        /// <returns>Returns Ok() if deck was made public, \
+        /// BadRequest() otherwise.</returns>
         [HttpPatch("publish"), Authorize]
         public async Task<IActionResult> PublishDeck([FromQuery] string id)
         {
@@ -246,6 +291,11 @@ namespace FlashcardsApp.Controllers
 
         }
 
+        /// <summary>
+        /// Validation if card's contents are valid for database.
+        /// </summary>
+        /// <param name="card">Card containing front, reverse and description.</param>
+        /// <returns>Returns True if validation is passed, otherwise false.</returns>
         private bool ValidateCardDto(CardDto card)
         {
             if (card == null) return false;
@@ -255,11 +305,17 @@ namespace FlashcardsApp.Controllers
             return true;
         }
 
+        /// <summary>
+        /// Validation of deck's contents.
+        /// </summary>
+        /// <param name="newDeck">Deck containing title and description</param>
+        /// <returns>Returns True if validation is passed, otherwise false.</returns>
         private bool ValidateNewDeckDto(NewDeckDto newDeck)
         {
 
             if (newDeck == null) return false;
             if (newDeck.Title.Length > 32 || newDeck.Title.Length < 6) return false;
+            if (newDeck.Description.Length > 128) return false;
 
             return true;
         }

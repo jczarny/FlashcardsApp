@@ -1,0 +1,10 @@
+﻿apiRules:
+- exclude:
+    uidRegex: ^Microsoft
+    type: Type
+- exclude:
+    uidRegex: ^System
+    type: Type
+- exclude:
+    uidRegex: ^Migrations
+    type: Type

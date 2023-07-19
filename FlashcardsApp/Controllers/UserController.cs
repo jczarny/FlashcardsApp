@@ -8,15 +8,31 @@ using System.Text.Json;
 
 namespace FlashcardsApp.Controllers
 {
+    /// <summary>
+    /// Class <c>UserController</c> filled with endpoints concerening user-to-deck management.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [EnableCors("_myAllowSpecificOrigins")]
     public class UserController : ControllerBase
     {
+        /// <summary>
+        /// Model containing database queries concerning user management.
+        /// </summary>
         private readonly IUserModel _userModel;
+        /// <summary>
+        /// Model containing database queries concerning learning process management.
+        /// </summary>
         private readonly ILearnModel _learnModel;
         private readonly string _connectionString;
 
+        /// <summary>
+        /// Constructor injecting dependency of: \
+        /// - repository for commissioning database calls, \
+        /// - configuration for acquiring connectionString which might come in handy.
+        /// </summary>
+        /// <param name="configuration">Configuration stored in appsettings.json</param>
+        /// <param name="repo">Repository containing all database queries.</param>
         public UserController(IConfiguration configuration, IFlashcardsRepository repo)
         {
 
@@ -25,9 +41,10 @@ namespace FlashcardsApp.Controllers
             _learnModel = repo._learnModel;
         }
 
-        /*
-         * Get dictionary of owned decks and amount of cards to revise today.
-         */
+        /// <summary>
+        /// Get list of owned decks with amount of cards to revise today.
+        /// </summary>
+        /// <returns>Returns jsonSerialized list of decks</returns>
         [HttpGet("owned-decks"), Authorize]
         public async Task<ActionResult<List<DeckDto>>> GetOwnedDecks()
         {
@@ -64,9 +81,11 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        /*
-         * Acquire public deck from deck browser.
-         */
+        /// <summary>
+        /// Acquire public deck from deck browser.
+        /// </summary>
+        /// <param name="id">Id of deck to be acquired.</param>
+        /// <returns>Returns Ok() if success, BadRequest(400) if something went wrong.</returns>
         [HttpPost("acquire"), Authorize]
         public async Task<IActionResult> Acquire([FromQuery] string id)
         {

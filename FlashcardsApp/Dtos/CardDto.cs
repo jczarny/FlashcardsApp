@@ -1,16 +1,30 @@
 ﻿namespace FlashcardsApp.Dtos
 {
+    /// <summary>
+    /// Data Transfer Object between frontend and backend. Depicts basic information about card.
+    /// </summary>
     public class CardDto
     {
-        // Id of card in database
+        /// <summary>
+        /// Id of card in database.
+        /// </summary>
         public int? Id { get; set; }
-        // Id of deck the cards belongs to
+
+        /// <summary>
+        /// Id of deck the cards belongs to.
+        /// </summary>
         public int DeckId { get; set; }
-        // Front text of card
+        /// <summary>
+        /// Front text of card, from which user has to guess reverse.
+        /// </summary>
         public string Front { get; set; } = string.Empty;
-        // Reverse text of card
+        /// <summary>
+        /// Reverse text of card.
+        /// </summary>
         public string Reverse { get; set; } = string.Empty;
-        // Description of card
+        /// <summary>
+        /// Description helping user understand the usage of term, for example word used in a sentence.
+        /// </summary>
         public string Description { get; set; } = string.Empty;
     }
 }

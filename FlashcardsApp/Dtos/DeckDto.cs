@@ -1,22 +1,41 @@
 ﻿namespace FlashcardsApp.Dtos
 {
+    /// <summary>
+    /// Data Transfer Object between frontend and backend. Depicts basic information about deck.
+    /// </summary>
     public class DeckDto
     { 
-        // Id of deck in database
+        /// <summary>
+        /// Id of deck in database.
+        /// </summary>
         public int Id { get; set; }
-        // Amount of cards to revise by a certain user (unrequired)
+        /// <summary>
+        /// Amount of cards to revise by a certain user (unrequired).
+        /// </summary>
         public int? CardsToRevise { get; set; }
-        // Is a certain user owner of this deck or did he acquire it in deck browser
+        /// <summary>
+        /// Answers a question: Is a certain user owner of this deck or did he acquire it in deck browser?
+        /// </summary>
         public bool IsOwner { get; set; }
-        // Username of creator of deck used shown in deck browser
+        /// <summary>
+        /// Username of creator of deck used shown in deck browser.
+        /// </summary>
         public string CreatorName { get; set; } = string.Empty;
-        // Deck title
+        /// <summary>
+        /// Deck title.
+        /// </summary>
         public string Title { get; set; } = string.Empty;
-        // Deck description
+        /// <summary>
+        /// Deck description.
+        /// </summary>
         public string Description { get; set; } = string.Empty;
-        // Is deck private or public
+        /// <summary>
+        /// Is deck private or public.
+        /// </summary>
         public bool isPrivate { get; set; } = false;
-        // List of cards belonging to this deck
+        /// <summary>
+        /// List of cards belonging to this deck.
+        /// </summary>
         public List<CardDto> CardDtos { get; set; } = new List<CardDto>();
     }
 }

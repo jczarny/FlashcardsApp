@@ -3,6 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlashcardsApp
 {
+    /// <summary>
+    /// Entity framework database context. \
+    /// Creates Database, models relationships and seeds with example data.
+    /// </summary>
     public class FlashcardsContext : DbContext
     {
 
@@ -10,6 +14,11 @@ namespace FlashcardsApp
             : base(options)
         {
         }
+
+        /// <summary>
+        /// Creates entities, models relationships and puts restrictions as maxLength.
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             
@@ -50,12 +59,32 @@ namespace FlashcardsApp
 
             Seed(modelBuilder);
         }
+
+        /// <summary>
+        /// Entity containing all user credentials.
+        /// </summary>
         public DbSet<User> Users { get; set; }
+        /// <summary>
+        /// Entity containing user's achievments (Currently empty, work in progress).
+        /// </summary>
         public DbSet<Statistic> Statistics { get; set; }
+        /// <summary>
+        /// Entity containing information about decks made by users.
+        /// </summary>
         public DbSet<Deck> Decks { get; set; }
+        /// <summary>
+        /// Entity containing information about cards within decks.
+        /// </summary>
         public DbSet<Card> Cards { get; set; }
+        /// <summary>
+        /// Weak entity modeling owning deck by user.
+        /// </summary>
         public DbSet<UserDeck> UserDecks { get; set; }
 
+        /// <summary>
+        /// Seeds database with example data.
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         public void Seed(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().HasData(

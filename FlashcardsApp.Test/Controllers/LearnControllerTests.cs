@@ -153,7 +153,7 @@ namespace FlashcardsApp.Test.Controllers
             var response = await _sut.GetLearningCards(deckId, amount);
 
             // Assert
-            dynamic model = response.Result;
+            dynamic model = response.Result!;
             string actual = (string)model.Value;
             string expected = JsonSerializer.Serialize(cards);
 
@@ -183,7 +183,7 @@ namespace FlashcardsApp.Test.Controllers
             var response = await _sut.GetLearningCards(deckId, amount);
 
             // Assert
-            dynamic model = response.Result;
+            dynamic model = response.Result!;
             string actual = (string)model.Value;
 
             response.Result.Should().BeOfType(typeof(OkObjectResult));

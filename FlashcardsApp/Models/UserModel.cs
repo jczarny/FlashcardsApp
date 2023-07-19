@@ -5,18 +5,30 @@ using System.Data;
 
 namespace FlashcardsApp.Models
 {
+    /// <summary>
+    /// Model servicing all queries regarding user-to-deck management.
+    /// </summary>
     public class UserModel : IUserModel
     {
+        /// <summary>
+        /// Connection string to sql server.
+        /// </summary>
         public readonly string _connectionString;
 
+        /// <summary>
+        /// Inject connectionString required for communication with sql server.
+        /// </summary>
+        /// <param name="connectionString">connectionString from appsettings.json file.</param>
         public UserModel(string connectionString)
         {
             _connectionString = connectionString;
         }
-    
-        /*
-         * Get information about all decks owned by particular user.
-         */
+
+        /// <summary>
+        /// Gets information about all decks owned by particular user.
+        /// </summary>
+        /// <param name="userId">Id of user requesting such action.</param>
+        /// <returns>Returns list of decks in DeckDto objects.</returns>
         public async Task<List<DeckDto>> GetUsersDeckInfo(int userId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -45,9 +57,12 @@ namespace FlashcardsApp.Models
             }
         }
 
-        /*
-         * Get deck which is said to be public.
-         */
+        /// <summary>
+        /// Acquires deck which is said to be public. (as writing a record to UserDecks table)
+        /// </summary>
+        /// <param name="userId">Id of interested user.</param>
+        /// <param name="deckId">Id of deck the user's is interested in.</param>
+        /// <returns>Returns Ok() if succeedes.</returns>
         public async Task<IResult> AcquirePublicDeck(int userId, int deckId)
         {
             try

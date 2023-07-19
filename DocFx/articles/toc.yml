@@ -1,0 +1,11 @@
+- name: Stack
+  href: stack/stack.md
+
+- name: Authentication
+  href: authentication/authentication.md
+
+- name: Learning Process
+  href: learningProcess/learningProcess.md
+
+- name: Database Weight
+  href: databaseWeight/databaseWeight.md

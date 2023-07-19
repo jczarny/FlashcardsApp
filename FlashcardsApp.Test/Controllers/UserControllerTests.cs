@@ -62,7 +62,7 @@ namespace FlashcardsApp.Test.Controllers
 
             // Assert
             var res = response.Result as OkObjectResult;
-            string actual = (string)res.Value;
+            string actual = (string)res!.Value!;
 
             res.Should().BeOfType(typeof(OkObjectResult));
             actual.Should().Be("[]");
@@ -107,7 +107,7 @@ namespace FlashcardsApp.Test.Controllers
             var properDeckList = new List<DeckDto> { properDeckOutput };
 
             var res = response.Result as OkObjectResult;
-            string actual = (string)res.Value;
+            string actual = (string)res!.Value!;
             string expected = JsonSerializer.Serialize(properDeckList);
 
             res.Should().BeOfType(typeof(OkObjectResult));

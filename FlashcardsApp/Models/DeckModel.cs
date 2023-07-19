@@ -5,17 +5,30 @@ using System.Data;
 
 namespace FlashcardsApp.Models
 {
+    /// <summary>
+    /// Model servicing all queries regarding deck management.
+    /// </summary>
     public class DeckModel : IDeckModel
     {
+        /// <summary>
+        /// Connection string to sql server.
+        /// </summary>
         public static string? _connectionString { get; set; }
+        /// <summary>
+        /// Inject connectionString required for communication with sql server.
+        /// </summary>
+        /// <param name="connectionString">connectionString from appsettings.json file.</param>
         public DeckModel(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        /* Creates deck with userId as his owner.
-         * Returns true if succeeded.
-         */
+        /// <summary>
+        /// Creates deck with userId as his owner.
+        /// </summary>
+        /// <param name="deck">Object containing new deck's title and description.</param>
+        /// <param name="userId">User creating the deck.</param>
+        /// <returns>Returns True if succeedes.</returns>
         public async Task<bool> CreateDeck(NewDeckDto deck, int userId)
         {
             try
@@ -40,10 +53,13 @@ namespace FlashcardsApp.Models
             }
         }
 
-        /*
-         * Get information about deck.
-         * userId is used to check if he's the owner or not.
-         */
+        /// <summary>
+        /// Gets information about deck.
+        /// </summary>
+        /// <param name="deckId">Id of deck user want to get information about.</param>
+        /// <param name="userId">Id of user requesting this info, to check whether he's possessing the deck or not.</param>
+        /// <returns>Returns DeckDto with interesting for user's data.</returns>
+        /// <exception cref="ArgumentException">Raised if user does not possess such deck.</exception>
         public async Task<DeckDto> GetDeckInfo(int deckId, int userId)
         {
             try
@@ -79,10 +95,12 @@ namespace FlashcardsApp.Models
                 throw;
             }
         }
-        
-        /*
-         * Get deck's cards.
-         */
+
+        /// <summary>
+        /// Get deck's cards.
+        /// </summary>
+        /// <param name="deckId">Id of deck we want to grab cards from.</param>
+        /// <returns>Returns list of cards as CardDto objects.</returns>
         public async Task<List<CardDto>> GetDeckCards(int deckId)
         {
             List<CardDto> cards = new();
@@ -116,9 +134,11 @@ namespace FlashcardsApp.Models
             }
         }
 
-        /*
-         * Get all decks that are marked as public.
-         */
+        /// <summary>
+        /// Gets all decks that are marked as public.
+        /// </summary>
+        /// <param name="userId">User Id, required to check whether user is an owner of deck or not.</param>
+        /// <returns>Returns list of decks as DeckDto objects.</returns>
         public async Task<List<DeckDto>> GetPublicDecks(int userId)
         {
             List<DeckDto> decks = new List<DeckDto>();
@@ -146,11 +166,13 @@ namespace FlashcardsApp.Models
                 }
             } catch { throw; }
         }
-    
-        /*
-         *  Adds card to deck.
-         *  Returns Id of added card, or -1 if user does not own deck to which he want add card to.
-         */
+
+        /// <summary>
+        /// Adds card to deck.
+        /// </summary>
+        /// <param name="card">Card object with all necessary data to record one in database.</param>
+        /// <param name="userId">Id of user to check whether user has rights to add card.</param>
+        /// <returns>Returns Id of added card, or -1 if user does not own deck to which he want add card to.</returns>
         public async Task<string> AddCardToDeck(CardDto card, int userId)
         {
             try
@@ -178,10 +200,14 @@ namespace FlashcardsApp.Models
                 throw;
             }
         }
-    
-        /*
-         * Deletes card by its id.
-         */
+
+        /// <summary>
+        /// Deletes card by its id.
+        /// </summary>
+        /// <param name="cardId">Id of card to be deleted.</param>
+        /// <param name="userId">Id of user to check whether user has rights to delete card.</param>
+        /// <returns>Returns True if succeeded.</returns>
+        /// <exception cref="ArgumentException">Raised if user does not possess such deck.</exception>
         public async Task<bool> DeleteCardFromDeck(int cardId, int userId)
         {
             try
@@ -205,10 +231,13 @@ namespace FlashcardsApp.Models
             catch { throw; }
         }
 
-        /*
-         * Deletes deck if userId is its owner, or just removes it from acquired if its not his.
-         * Cards and RevisionLogs are cascaded automatically.
-         */
+        /// <summary>
+        /// Deletes deck if userId is its owner, or just removes it from acquired if its not his. \
+        /// Cards and RevisionLogs are cascaded automatically.
+        /// </summary>
+        /// <param name="userId">Id of user to check whether user has rights to delete deck.</param>
+        /// <param name="deckId"></param>
+        /// <returns>Returns True if succeeded.</returns>
         public async Task<bool> DeleteDeck(int userId, int deckId)
         {
             try
@@ -233,9 +262,13 @@ namespace FlashcardsApp.Models
             }
         }
 
-        /*
-         * Publish deck if its possible.
-         */
+        /// <summary>
+        /// Publishes deck.
+        /// </summary>
+        /// <param name="deckId">Id of deck to be published.</param>
+        /// <param name="userId">Id of user to check wheter user has rights for such decision.</param>
+        /// <returns>Returns True if succeeded.</returns>
+        /// <exception cref="ArgumentException">Raised if User is not creator of this deck.</exception>
         public async Task<bool> PublishDeck(int deckId, int userId)
         {
             try

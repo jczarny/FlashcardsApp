@@ -6,20 +6,38 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FlashcardsApp.Controllers
 {
+    /// <summary>
+    /// Class <c>AuthController</c> manages user authentication by handling logging in and out, registering 
+    /// and refreshing user's tokens.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [EnableCors("_myAllowSpecificOrigins")]
+    
     public class AuthController : ControllerBase
     {
+        /// <summary>
+        /// Model used for calling database queries.
+        /// </summary>
         private readonly AuthModel _auth;
 
-        // Get db context and project config
+        /// <summary>
+        /// Constructor injecting database context and configuration for connectionString.
+        /// </summary>
+        /// <param name="context">Entity Framework context.</param>
+        /// <param name="configuration">Project configuration containing connectionString.</param>
         public AuthController(FlashcardsContext context, IConfiguration configuration)
         {
             _auth = new AuthModel(context, configuration);
         }
 
-        // Register with given username and password
+        /// <summary>
+        /// Function <c>Register</c> validates credentials, and records new user with given username and password.
+        /// </summary>
+        /// <param name="request">Given by user username and password.</param>
+        /// <returns> Returns empty status code 200 when success, \
+        /// Conflict(409) when such username is taken, \
+        /// in other cases BadRequest(400). </returns>
         [HttpPost("register")]
         public async Task<ActionResult<User>> Register([FromBody] UserDto request)
         {
@@ -51,10 +69,15 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        /*
-         * Login with given username and password, set http-only refresh token and userId token, 
-         * respond with generated access token.
-         */
+        /// <summary>
+        /// Function <c>Login</c> validates credentials and sets http-only refresh token and userId token.
+        /// </summary>
+        /// <param name="request">Given by user username and password.</param>
+        /// <returns> Returns Ok() with new AccessToken in body, and before that, sets 
+        /// http-only cookies with userId and refreshToken. \
+        /// If no such user found, return Conflict(409). \
+        /// If given password is invalid return Unauthorized(401). \
+        /// in other cases return BadRequest(400). </returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserDto request)
         {
@@ -91,7 +114,12 @@ namespace FlashcardsApp.Controllers
 
         }
 
-        // Logout, clear user's tokens.
+        /// <summary>
+        /// Function <c>Logout</c> clears user's tokens.
+        /// </summary>
+        /// <returns> Returns Ok() when success. \
+        /// Conflict(409) when no such user found. \
+        /// In other cases BadRequest(400) </returns>
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
@@ -121,8 +149,13 @@ namespace FlashcardsApp.Controllers
 
         }
 
-        // Refresh all tokens
-        // TODO: add client id&secret in order to filter db while checking refresh token
+        /// <summary>
+        /// Function <c>RefreshTokens</c> validates http-only refreshToken, and if its valid then refreshes all tokens.
+        /// </summary>
+        /// <returns> Returns Ok() with new AccessToken in body, and before that, sets 
+        /// http-only cookies with userId and refreshToken. \
+        /// Unauthorized(401) when no refresh token given in cookie, or thrown by UserModel. \
+        /// In other cases BadRequest(400). </returns>
         [HttpPost("refresh-tokens")]
         public async Task<ActionResult<string>> RefreshTokens()
         {
@@ -156,7 +189,10 @@ namespace FlashcardsApp.Controllers
             }
         }
 
-        // Set http-only cookie storing refresh token
+        /// <summary>
+        /// Function <c>SetRefreshToken</c> sets http-only cookie storing refresh token.
+        /// </summary>
+        /// <param name="refreshToken">Token to be set as a cookie.</param>
         private void SetRefreshToken(RefreshToken refreshToken)
         {
             var cookieOptions = new CookieOptions
@@ -167,7 +203,10 @@ namespace FlashcardsApp.Controllers
             Response.Cookies.Append("refreshToken", refreshToken.Token, cookieOptions);
         }
 
-        // Set http-only cookie storing user id 
+        /// <summary>
+        /// Function <c>SetUserIdToken</c> sets http-only cookie storing user id.
+        /// </summary>
+        /// <param name="userIdToken">Token to be set as a cookie.</param>
         private void SetUserIdToken(UserIdToken userIdToken)
         {
             var cookieOptions = new CookieOptions
@@ -178,7 +217,9 @@ namespace FlashcardsApp.Controllers
             Response.Cookies.Append("userId", userIdToken.Token, cookieOptions);
         }
 
-        // Delete client-side cookies
+        /// <summary>
+        /// Function <c>DeleteTokens</c> deletes authentication tokens client-side.
+        /// </summary>
         private void DeleteTokens()
         {
             var cookieOptions = new CookieOptions

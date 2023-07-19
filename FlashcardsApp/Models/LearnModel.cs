@@ -5,10 +5,15 @@ using System.Data;
 
 namespace FlashcardsApp.Models
 {
+    /// <summary>
+    /// Model servicing all queries regarding learning process management.
+    /// </summary>
     public class LearnModel : ILearnModel
     {
-        // Depending on stage the card is in (which depends on previous user's results)
-        // evaluate when should be the card revised (in days)
+        /// <summary>
+        /// Depending on stage the card is in (which depends on previous user's results), 
+        /// evaluate when should be the card revised (in days).
+        /// </summary>
         private static readonly Dictionary<int, int> Stage_DaysToRevise = new()
         {
             {0, 4},
@@ -20,8 +25,10 @@ namespace FlashcardsApp.Models
             {6, 360},
         };
 
-        // Depending on an answer given by user, decrease time to next revisision
-        // 1 = Again, 2 = Hard, 3 = Medium, 4 = Easy
+        /// <summary>
+        /// Depending on an answer given by user, decrease time to next revision: \
+        /// 1 = Try Again, 2 = Hard, 3 = Medium, 4 = Easy
+        /// </summary>
         private static readonly Dictionary<int, float> Ease_ReviseMulitplier = new Dictionary<int, float>
         {
             {1, 0},
@@ -30,19 +37,31 @@ namespace FlashcardsApp.Models
             {4, 1}
         };
 
+        /// <summary>
+        /// Connection string to sql server.
+        /// </summary>
         public static string? _connectionString { get; set; }
 
+        /// <summary>
+        /// Inject connectionString required for communication with sql server.
+        /// </summary>
+        /// <param name="connectionString">connectionString from appsettings.json file.</param>
         public LearnModel(string connectionString)
         {
             _connectionString = connectionString;
         }
 
-        /*
-         *  Gets learning cards by following schema:
-         *  Firstly, check if some cards require revision (if date in RevisionLog is past today's one)
-         *  Secondly, get new cards that have never been seen (exist in Deck, but not in RevisionLog)
-         *  At last, if we run out of cards - signal it to frontend
-         */
+        /// <summary>
+        /// Function <c>GetLearningCards</c> gets learning cards by following schema: \
+        /// Firstly, check if some cards require revision (if date in RevisionLog is past today's one). \
+        /// Secondly, get new cards that have never been seen (exist in Deck, but not in RevisionLog). \
+        /// At last, if we run out of cards - signal it properly.
+        /// </summary>
+        /// <param name="userId">Id of user currently is learning.</param>
+        /// <param name="deckId">Id of deck user's is currently learning from.</param>
+        /// <param name="cardAmount">Amount of cards we want to grab from database, the higher the value the less
+        /// calls to database, but larger response sizes.</param>
+        /// <returns>Returns list of cards most urgent to revise/learn.</returns>
         public async Task<List<CardDto>> GetLearningCards(int userId, int deckId, int cardAmount)
         {
             // Cards to be returned in a proper order (from more urgent to less)
@@ -125,10 +144,15 @@ namespace FlashcardsApp.Models
             }
         }
 
-        /*
-         * Evaluate user's knowledge depending on its response now and historical responses.
-         * Returns 1 if it evaluates successfully.
-         */
+        /// <summary>
+        /// Function <c>EvaluateResult</c> evaluate user's knowledge depending on its response now and historical responses.
+        /// </summary>
+        /// <param name="userId">Id of user currently is learning.</param>
+        /// <param name="cardId">Id of card user's is currently learning from.</param>
+        /// <param name="deckId">Id of deck user's is currently learning from.</param>
+        /// <param name="response">Response the user gave grading his proficiency about this card. \
+        /// (Try again (1), Hard (2), ... )</param>
+        /// <returns>Returns 1 if it evaluates successfully</returns>
         public async Task<bool> EvaluateResult(int userId, int cardId, int deckId, int response)
         {
             try
@@ -189,11 +213,13 @@ namespace FlashcardsApp.Models
                 throw;
             }
         }
-        /*
-         * Get amount of cards that need to be revised today.
-         * Shown in home's deck card.
-         * Return dictionary of deckId and amount of cards to revise for this particular user
-         */
+
+        /// <summary>
+        /// Get amount of cards that need to be revised today. \
+        /// Shown in home's deck card.
+        /// </summary>
+        /// <param name="userId">Id of user.</param>
+        /// <returns>Returns dictionary of deckId and amount of cards to revise for this particular user.</returns>
         public async Task<Dictionary<int, int>> GetReviseCardAmount(int userId)
         {
             Dictionary<int, int> CardsToReviseByDeck= new();
@@ -221,9 +247,12 @@ namespace FlashcardsApp.Models
             }
         }
 
-        /*
-         * Schema for determining next revision date of a card, based on stage and current response.
-         */
+        /// <summary>
+        /// Schema for determining next revision date of a card, based on stage and current response.
+        /// </summary>
+        /// <param name="stage">Value from database, signaling how did he deal with previous attempts on partciular card.</param>
+        /// <param name="response">Value signaling how did he deal with card now.</param>
+        /// <returns>Returns calculated date of next revision of such card.</returns>
         private DateTime CalcualteNextRevisionDate(int stage, int response)
         {
             if (response == 1)
@@ -234,15 +263,19 @@ namespace FlashcardsApp.Models
                 return DateTime.Now.AddDays(days);
             }
         }
-        /*
-         * Calculate new stage, depending on current stage (user's fluency of this card) and current response.
-         */
+
+        /// <summary>
+        /// Calculate new stage, depending on current stage (user's fluency of this card) and current response.
+        /// </summary>
+        /// <param name="stage">Value from database, signaling how did he deal with previous attempts on partciular card.</param>
+        /// <param name="response">Value signaling how did he deal with card now.</param>
+        /// <returns>Returns calculated new stage of card user's in.</returns>
         private int CalculateNewStage(int stage, int response)
         {
             if (response == 0)
-                return stage - 1;
+                return Math.Max(stage - 1, 0);
             else
-                return stage + 1;
+                return Math.Max(stage + 1, 6);
         }
 
     }
