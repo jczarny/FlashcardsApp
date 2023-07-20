@@ -1,0 +1,538 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class DeckController
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class DeckController
+   ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="FlashcardsApp.Controllers.DeckController">
+  
+  
+  <h1 id="FlashcardsApp_Controllers_DeckController" data-uid="FlashcardsApp.Controllers.DeckController" class="text-break">Class DeckController
+  </h1>
+  <div class="markdown level0 summary"><p>Class <code>DeckController</code> filled with endpoints concerening deck management.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Microsoft.AspNetCore.Mvc.ControllerBase</span></div>
+    <div class="level2"><span class="xref">DeckController</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="FlashcardsApp.Controllers.html">FlashcardsApp.Controllers</a></h6>
+  <h6><strong>Assembly</strong>: FlashcardsApp.dll</h6>
+  <h5 id="FlashcardsApp_Controllers_DeckController_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ApiController]
+[Route(&quot;api/[controller]&quot;)]
+[EnableCors(&quot;_myAllowSpecificOrigins&quot;)]
+public class DeckController : ControllerBase</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController__ctor_IConfiguration_FlashcardsApp_Interfaces_IFlashcardsRepository_.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.%23ctor(IConfiguration%2CFlashcardsApp.Interfaces.IFlashcardsRepository)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L32">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController__ctor_" data-uid="FlashcardsApp.Controllers.DeckController.#ctor*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController__ctor_IConfiguration_FlashcardsApp_Interfaces_IFlashcardsRepository_" data-uid="FlashcardsApp.Controllers.DeckController.#ctor(IConfiguration,FlashcardsApp.Interfaces.IFlashcardsRepository)">DeckController(IConfiguration, IFlashcardsRepository)</h4>
+  <div class="markdown level1 summary"><p>Constructor injecting dependency of: \</p>
+<ul>
+<li>repository for commissioning database calls, \</li>
+<li>configuration for acquiring connectionString which might come in handy.</li>
+</ul>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DeckController(IConfiguration configuration, IFlashcardsRepository repo)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">IConfiguration</span></td>
+        <td><span class="parametername">configuration</span></td>
+        <td><p>Configuration stored in appsettings.json</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="FlashcardsApp.Interfaces.IFlashcardsRepository.html">IFlashcardsRepository</a></td>
+        <td><span class="parametername">repo</span></td>
+        <td><p>Repository containing all database queries.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController_AddCard_FlashcardsApp_Dtos_CardDto_.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.AddCard(FlashcardsApp.Dtos.CardDto)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L144">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController_AddCard_" data-uid="FlashcardsApp.Controllers.DeckController.AddCard*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController_AddCard_FlashcardsApp_Dtos_CardDto_" data-uid="FlashcardsApp.Controllers.DeckController.AddCard(FlashcardsApp.Dtos.CardDto)">AddCard(CardDto)</h4>
+  <div class="markdown level1 summary"><p>Function <code>AddCard</code> adds card to a deck, if deck exists and user is allowed to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[HttpPost(&quot;addcard&quot;)]
+[Authorize]
+public async Task&lt;ActionResult&lt;string&gt;&gt; AddCard([FromBody] CardDto card)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="FlashcardsApp.Dtos.CardDto.html">CardDto</a></td>
+        <td><span class="parametername">card</span></td>
+        <td><p>Card information, which is id of deck this card is added to, front, reverse and description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">Microsoft.AspNetCore.Mvc.ActionResult</span>&lt;<span class="xref">System.String</span>&gt;&gt;</td>
+        <td><p>Returns Ok() containing new card's Id when successful. /
+Otherwise BadRequest(400) with adequate message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController_CreateDeck_FlashcardsApp_Dtos_NewDeckDto_.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.CreateDeck(FlashcardsApp.Dtos.NewDeckDto)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L88">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController_CreateDeck_" data-uid="FlashcardsApp.Controllers.DeckController.CreateDeck*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController_CreateDeck_FlashcardsApp_Dtos_NewDeckDto_" data-uid="FlashcardsApp.Controllers.DeckController.CreateDeck(FlashcardsApp.Dtos.NewDeckDto)">CreateDeck(NewDeckDto)</h4>
+  <div class="markdown level1 summary"><p>Function <code>CreateDeck</code> creates deck with given title and description.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[HttpPost(&quot;create&quot;)]
+[Authorize]
+public async Task&lt;IActionResult&gt; CreateDeck([FromBody] NewDeckDto deck)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="FlashcardsApp.Dtos.NewDeckDto.html">NewDeckDto</a></td>
+        <td><span class="parametername">deck</span></td>
+        <td><p>Its title and description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">Microsoft.AspNetCore.Mvc.IActionResult</span>&gt;</td>
+        <td><p>Returns Ok() if successful, otherwise BadRequest(400).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController_DeleteCard_System_String_.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.DeleteCard(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L183">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController_DeleteCard_" data-uid="FlashcardsApp.Controllers.DeckController.DeleteCard*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController_DeleteCard_System_String_" data-uid="FlashcardsApp.Controllers.DeckController.DeleteCard(System.String)">DeleteCard(String)</h4>
+  <div class="markdown level1 summary"><p>Function <code>DeleteCard</code> deletes card from deck if deck exists and user is allowed to.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[HttpDelete(&quot;card&quot;)]
+[Authorize]
+public async Task&lt;IActionResult&gt; DeleteCard([FromQuery] string id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Id of a to-be-deleted card.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">Microsoft.AspNetCore.Mvc.IActionResult</span>&gt;</td>
+        <td><p>Returns Ok() when successful, /
+BadRequest(400) otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController_DeleteDeck_System_String_.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.DeleteDeck(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L220">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController_DeleteDeck_" data-uid="FlashcardsApp.Controllers.DeckController.DeleteDeck*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController_DeleteDeck_System_String_" data-uid="FlashcardsApp.Controllers.DeckController.DeleteDeck(System.String)">DeleteDeck(String)</h4>
+  <div class="markdown level1 summary"><p>Function <code>DeleteDeck</code> deletes deck in two particular ways: \</p>
+<ul>
+<li>If user is creator of this deck, delete it globally. \</li>
+<li>If user acquired it from public decks, delete it personally.</li>
+</ul>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[HttpDelete]
+[Authorize]
+public async Task&lt;IActionResult&gt; DeleteDeck([FromQuery] string id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Id of a to-be-deleted deck.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">Microsoft.AspNetCore.Mvc.IActionResult</span>&gt;</td>
+        <td><p>Returns Ok() when succssful.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController_GetDeck_System_String_.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.GetDeck(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L45">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController_GetDeck_" data-uid="FlashcardsApp.Controllers.DeckController.GetDeck*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController_GetDeck_System_String_" data-uid="FlashcardsApp.Controllers.DeckController.GetDeck(System.String)">GetDeck(String)</h4>
+  <div class="markdown level1 summary"><p>Function <code>GetDeck</code> gets deck info by its id, if this particular authenticated user owns it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[HttpGet]
+[Authorize]
+public async Task&lt;ActionResult&lt;DeckDto&gt;&gt; GetDeck([FromQuery] string deckId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">deckId</span></td>
+        <td><p>Id of deck stored in database.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">Microsoft.AspNetCore.Mvc.ActionResult</span>&lt;<a class="xref" href="FlashcardsApp.Dtos.DeckDto.html">DeckDto</a>&gt;&gt;</td>
+        <td><p>Returns, if successful, Ok() with whole deck information including its cards. <br>
+Otherwise BadRequest(400) with adequate message.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController_GetPublicDecks.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.GetPublicDecks%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L117">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController_GetPublicDecks_" data-uid="FlashcardsApp.Controllers.DeckController.GetPublicDecks*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController_GetPublicDecks" data-uid="FlashcardsApp.Controllers.DeckController.GetPublicDecks">GetPublicDecks()</h4>
+  <div class="markdown level1 summary"><p>Function <code>GetPublicDecks</code> gets all public decks withing database. (have isPrivate set on 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[HttpGet(&quot;getPublic&quot;)]
+[Authorize]
+public async Task&lt;ActionResult&lt;List&lt;DeckDto&gt;&gt;&gt; GetPublicDecks()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">Microsoft.AspNetCore.Mvc.ActionResult</span>&lt;<span class="xref">List</span>&lt;<a class="xref" href="FlashcardsApp.Dtos.DeckDto.html">DeckDto</a>&gt;&gt;&gt;</td>
+        <td><p>Returns list of public decks.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController_PublishDeck_System_String_.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController.PublishDeck(System.String)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L264">View Source</a>
+  </span>
+  <a id="FlashcardsApp_Controllers_DeckController_PublishDeck_" data-uid="FlashcardsApp.Controllers.DeckController.PublishDeck*"></a>
+  <h4 id="FlashcardsApp_Controllers_DeckController_PublishDeck_System_String_" data-uid="FlashcardsApp.Controllers.DeckController.PublishDeck(System.String)">PublishDeck(String)</h4>
+  <div class="markdown level1 summary"><p>Function <code>PublishDeck</code> makes deck public (available to use for everyone).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[HttpPatch(&quot;publish&quot;)]
+[Authorize]
+public async Task&lt;IActionResult&gt; PublishDeck([FromQuery] string id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Id of a deck to be made public.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Task</span>&lt;<span class="xref">Microsoft.AspNetCore.Mvc.IActionResult</span>&gt;</td>
+        <td><p>Returns Ok() if deck was made public, <br>
+BadRequest() otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_Controllers_DeckController.md&amp;value=---%0Auid%3A%20FlashcardsApp.Controllers.DeckController%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/Controllers/DeckController.cs/#L14" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

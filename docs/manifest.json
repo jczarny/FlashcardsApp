@@ -1,0 +1,678 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/opszc/source/repos/FlashcardsApp/DocFx",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Controllers.AuthController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Controllers.AuthController.html",
+          "hash": "hfYS4qVtPgwwB/fzt6Y57jQOYLpgZTZmMDrHgFXzDn0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Controllers.DeckController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Controllers.DeckController.html",
+          "hash": "yuQrU2yFuOeKqOy+19MS33+Qhcy0Z5Z+53Pu7hw6HZ0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Controllers.LearnController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Controllers.LearnController.html",
+          "hash": "FAH+V73kp6UrHpmm54HuKgJQmLRMKMMBe5DOq5D2jHc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Controllers.UserController.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Controllers.UserController.html",
+          "hash": "FMpsiA/eUAWE8z55SaLursNGTh5YUqr5vyCxW1Mwss8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Controllers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Controllers.html",
+          "hash": "YyRkeF0TsMAa9We96k/5BcuR/uX8epqI2RZTe4qLJWc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Dtos.CardDto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Dtos.CardDto.html",
+          "hash": "Vj5ScC159oIneZuO6oNz+HlrO3Y2WBr81eqh2E212vs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Dtos.DeckDto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Dtos.DeckDto.html",
+          "hash": "SJ0S5DfrVH7BHux0V5K0MqsiDL247B/8s8mu0cYSV3k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Dtos.LearnDto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Dtos.LearnDto.html",
+          "hash": "RBNgRn/YFnKTuq128BOomPqHJIzcMlvocZDEDyeXd14="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Dtos.NewDeckDto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Dtos.NewDeckDto.html",
+          "hash": "jddSoqZFaJWe9HMQ3Cwsd5xxzsxxA49Jx8PWGm8Pslw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Dtos.UserDto.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Dtos.UserDto.html",
+          "hash": "jWG1Y6pd2hlCHxH9k1QCuj2SlzS4OMwChBWj1Xlkta8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Dtos.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Dtos.html",
+          "hash": "y1Sjtf29MTQt36m7D6Ra5Nkcoipvp3EfEjZimWf1Wu8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Entities.Card.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Entities.Card.html",
+          "hash": "Fwdli+ZKnmnyfyEV3OFGe8BAuxSzvocqe3ZmklOaT90="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Entities.Deck.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Entities.Deck.html",
+          "hash": "5b3npMQipTkOV95Tts/6/zaZE1c4J9ESGs6z1UT+Pzw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Entities.RevisionLog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Entities.RevisionLog.html",
+          "hash": "tXKJBvLY34PBFRBXIhLVXl6cIWqRwmkTDeKjXxIMpnk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Entities.Statistic.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Entities.Statistic.html",
+          "hash": "yy+DkJS8ljNZO5/WwdozUpEO01KCzhb/56HVAr4Gaoc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Entities.User.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Entities.User.html",
+          "hash": "K52B7zE4fF/8Hw+zGjsA3pdalQrLK1ExlJ06MthFmr8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Entities.UserDeck.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Entities.UserDeck.html",
+          "hash": "2YJhR4xTtfJiD8/3WZ/PoDn/ov0aLlEqzgmSjyuUTs0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Entities.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Entities.html",
+          "hash": "aAJ5HkiSydxOGUujj/se4LIluvgKaSFDVmu1R+wepbQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.FlashcardsContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.FlashcardsContext.html",
+          "hash": "0WWiGibF4f7QmRFW0KeTycOIx0pvsIZTLRmMb4t+kS8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.FlashcardsRepository.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.FlashcardsRepository.html",
+          "hash": "sfVUGgU9qaVheCmZJJXT34zgTy9C2EUQ3vPTZfx5Zmw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Interfaces.IAuthModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Interfaces.IAuthModel.html",
+          "hash": "9OqPhef+yfaaXBdy5Z3CcVcewEkxVpABYo9sBOiGDBU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Interfaces.IDeckModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Interfaces.IDeckModel.html",
+          "hash": "bubg3LU0wnxXVb1Mfcy8obSPDXr4mBnMHZyLUlcg8qc="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Interfaces.IFlashcardsRepository.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Interfaces.IFlashcardsRepository.html",
+          "hash": "ccPhQkBeoD5blQGP8E7EBIKlEhzVHie/RsSmSDAilqw="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Interfaces.ILearnModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Interfaces.ILearnModel.html",
+          "hash": "PoSbSDYku0yBl//2De+is4P957aekgyCEZJj8RR5ILU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Interfaces.IUserModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Interfaces.IUserModel.html",
+          "hash": "q3PQa9upIOS1vRRuErYC9qC6hJXzEvoK/nzjcyjgj4k="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Interfaces.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Interfaces.html",
+          "hash": "C0hMfNT8oJ5e9B433u0+Ydtsa+dEOAFP4Dr2DENZARo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Migrations.AddRefreshToken.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Migrations.AddRefreshToken.html",
+          "hash": "gP2VgeFrNwLrM1rTfmUzVntQSNnqBPp1ajGTV3HtqtM="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Migrations.HashPassword.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Migrations.HashPassword.html",
+          "hash": "AT7VUdK5uqIb/wtdYUtfJUVIRahs9TshfRGKiMzYl7A="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Migrations.Init.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Migrations.Init.html",
+          "hash": "n2mk9mrQWHoDakJKmP7fx8qJRmh5TEqZPSymd26NBUs="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Migrations.Initialize.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Migrations.Initialize.html",
+          "hash": "M8YBjCu3KE2d3GU8VjeFc6UbNk013zJ02nfqVjwywKs="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Migrations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Migrations.html",
+          "hash": "hjYj0tkMHEXYuPpNZZnKc5WwvTID1wvlkQNbaLGMSeU="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.AuthModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.AuthModel.html",
+          "hash": "PgWQEU9bcDe65ijl20dXta6MXupblOQ5UD9G5r/wL1M="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.DeckModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.DeckModel.html",
+          "hash": "8Sv2hZLvgL3l/CnELVn2cM2Eut70w9bt1CD5hhOsRn8="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.Learn.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.Learn.html",
+          "hash": "hqzUI58gBoPJjNghVcounO1gVj+7txOeQztQwRwX7zs="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.LearnModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.LearnModel.html",
+          "hash": "SemS9P7DP1N80az27R5DuREQsnaguSX/2WOL5DFDMmY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.RefreshToken.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.RefreshToken.html",
+          "hash": "Bj5+u/I4KOSiywq939Ry4+iilJaa5vCC2KnSXgnr8uE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.UserIdToken.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.UserIdToken.html",
+          "hash": "W42rs29Yp5MQC+ogFVjDzicctxYmyfgfUHDXAnpwuN0="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.UserModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.UserModel.html",
+          "hash": "dzBPjZ3LDFbPnsWc5gkI68BccZ4loIrVNzCoWqid7mU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Models.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Models.html",
+          "hash": "4aLzF7U2f7cAfZYVp7Y6jGRdHF1Az6mJ8ihEVthrMcE="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Pages.ErrorModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Pages.ErrorModel.html",
+          "hash": "ujRMUWYzzL6Tu1XJ1wIHwt+9OS+5yIhMty/Xo/F7uvk="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.Pages.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.Pages.html",
+          "hash": "TSBCiK949He4Luw1BmJ815sehRvIf0Z2xO8zHQfqqFE="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/FlashcardsApp.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/FlashcardsApp.html",
+          "hash": "M+xKW5581k+8QUQBIIQx5vDgk44DpUAcjvro7idj9RU="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "JnAI1rjEK49xlq/yeCSox0t2ZcFquJ8Fp0k+iiZ0saY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "3HScDS5ZN3nLSftWU+jCIGH80gALQPqEiTnkOswITpM="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/authentication/authentication.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/authentication/authentication.html",
+          "hash": "YKSB8WdSpylrHBzKqWULOsHjoDVtLnDJr76KCElykeY="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/databaseWeight/DatabaseWeight.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/databaseWeight/DatabaseWeight.html",
+          "hash": "3g9kbyJmrwnw4C2+bPCHL05He7a/cgGQ5UlWIQi4W6E="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "5CXMQd0u6IfVVZdkTq0cMMhYJRioB78FMjrn3w2vBlI="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/learningProcess/learningProcess.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/learningProcess/learningProcess.html",
+          "hash": "HPjpVSaFDQ8OkNV50uWKgkZbVma79P27TyoKrGa+Q3s="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/stack/stack.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/stack/stack.html",
+          "hash": "Yx+alHBmQi/WY7jSQURmBiULs3StsD0yZCgRUJeFZvg="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "79ghSQVlKAB46vPqdfJXQJWEMT2G5KdaBlwhlp2pKiQ="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "RC8nbCVdpp6VzMceKJzWqz3SexrWSZKVrU4xmwq44Dk="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "k7VAoEVjFTnvw2qDX2rnYVvd3e67ZU6+9oytifvgDKo="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 7,
+          "skipped_file_count": 0
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 42,
+          "skipped_file_count": 13
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

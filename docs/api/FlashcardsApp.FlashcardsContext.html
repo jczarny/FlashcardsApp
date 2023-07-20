@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class FlashcardsContext
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class FlashcardsContext
+   ">
+    <meta name="generator" content="docfx 2.59.4.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="FlashcardsApp.FlashcardsContext">
+  
+  
+  <h1 id="FlashcardsApp_FlashcardsContext" data-uid="FlashcardsApp.FlashcardsContext" class="text-break">Class FlashcardsContext
+  </h1>
+  <div class="markdown level0 summary"><p>Entity framework database context. <br>
+Creates Database, models relationships and seeds with example data.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Microsoft.EntityFrameworkCore.DbContext</span></div>
+    <div class="level2"><span class="xref">FlashcardsContext</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="FlashcardsApp.html">FlashcardsApp</a></h6>
+  <h6><strong>Assembly</strong>: FlashcardsApp.dll</h6>
+  <h5 id="FlashcardsApp_FlashcardsContext_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class FlashcardsContext : DbContext, IInfrastructure&lt;IServiceProvider&gt;, IDbContextDependencies, IDbSetCache, IDbContextPoolable, IResettableService, IDisposable, IAsyncDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext__ctor_Microsoft_EntityFrameworkCore_DbContextOptions_FlashcardsApp_FlashcardsContext__.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.%23ctor(Microsoft.EntityFrameworkCore.DbContextOptions%7BFlashcardsApp.FlashcardsContext%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L13">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext__ctor_" data-uid="FlashcardsApp.FlashcardsContext.#ctor*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext__ctor_Microsoft_EntityFrameworkCore_DbContextOptions_FlashcardsApp_FlashcardsContext__" data-uid="FlashcardsApp.FlashcardsContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{FlashcardsApp.FlashcardsContext})">FlashcardsContext(DbContextOptions&lt;FlashcardsContext&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public FlashcardsContext(DbContextOptions&lt;FlashcardsContext&gt; options)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.DbContextOptions</span>&lt;<a class="xref" href="FlashcardsApp.FlashcardsContext.html">FlashcardsContext</a>&gt;</td>
+        <td><span class="parametername">options</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext_Cards.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.Cards%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L79">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext_Cards_" data-uid="FlashcardsApp.FlashcardsContext.Cards*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext_Cards" data-uid="FlashcardsApp.FlashcardsContext.Cards">Cards</h4>
+  <div class="markdown level1 summary"><p>Entity containing information about cards within decks.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DbSet&lt;Card&gt; Cards { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.DbSet</span>&lt;<a class="xref" href="FlashcardsApp.Entities.Card.html">Card</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext_Decks.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.Decks%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L75">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext_Decks_" data-uid="FlashcardsApp.FlashcardsContext.Decks*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext_Decks" data-uid="FlashcardsApp.FlashcardsContext.Decks">Decks</h4>
+  <div class="markdown level1 summary"><p>Entity containing information about decks made by users.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DbSet&lt;Deck&gt; Decks { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.DbSet</span>&lt;<a class="xref" href="FlashcardsApp.Entities.Deck.html">Deck</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext_Statistics.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.Statistics%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L71">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext_Statistics_" data-uid="FlashcardsApp.FlashcardsContext.Statistics*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext_Statistics" data-uid="FlashcardsApp.FlashcardsContext.Statistics">Statistics</h4>
+  <div class="markdown level1 summary"><p>Entity containing user's achievments (Currently empty, work in progress).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DbSet&lt;Statistic&gt; Statistics { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.DbSet</span>&lt;<a class="xref" href="FlashcardsApp.Entities.Statistic.html">Statistic</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext_UserDecks.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.UserDecks%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L83">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext_UserDecks_" data-uid="FlashcardsApp.FlashcardsContext.UserDecks*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext_UserDecks" data-uid="FlashcardsApp.FlashcardsContext.UserDecks">UserDecks</h4>
+  <div class="markdown level1 summary"><p>Weak entity modeling owning deck by user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DbSet&lt;UserDeck&gt; UserDecks { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.DbSet</span>&lt;<a class="xref" href="FlashcardsApp.Entities.UserDeck.html">UserDeck</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext_Users.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.Users%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L67">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext_Users_" data-uid="FlashcardsApp.FlashcardsContext.Users*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext_Users" data-uid="FlashcardsApp.FlashcardsContext.Users">Users</h4>
+  <div class="markdown level1 summary"><p>Entity containing all user credentials.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DbSet&lt;User&gt; Users { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.DbSet</span>&lt;<a class="xref" href="FlashcardsApp.Entities.User.html">User</a>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext_OnModelCreating_Microsoft_EntityFrameworkCore_ModelBuilder_.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L24">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext_OnModelCreating_" data-uid="FlashcardsApp.FlashcardsContext.OnModelCreating*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext_OnModelCreating_Microsoft_EntityFrameworkCore_ModelBuilder_" data-uid="FlashcardsApp.FlashcardsContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">OnModelCreating(ModelBuilder)</h4>
+  <div class="markdown level1 summary"><p>Creates entities, models relationships and puts restrictions as maxLength.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnModelCreating(ModelBuilder modelBuilder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.ModelBuilder</span></td>
+        <td><span class="parametername">modelBuilder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">Microsoft.EntityFrameworkCore.DbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)</span></div>
+  <span class="small pull-right mobile-hide">
+    <span class="divider">|</span>
+    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext_Seed_Microsoft_EntityFrameworkCore_ModelBuilder_.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext.Seed(Microsoft.EntityFrameworkCore.ModelBuilder)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+  </span>
+  <span class="small pull-right mobile-hide">
+    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L89">View Source</a>
+  </span>
+  <a id="FlashcardsApp_FlashcardsContext_Seed_" data-uid="FlashcardsApp.FlashcardsContext.Seed*"></a>
+  <h4 id="FlashcardsApp_FlashcardsContext_Seed_Microsoft_EntityFrameworkCore_ModelBuilder_" data-uid="FlashcardsApp.FlashcardsContext.Seed(Microsoft.EntityFrameworkCore.ModelBuilder)">Seed(ModelBuilder)</h4>
+  <div class="markdown level1 summary"><p>Seeds database with example data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Seed(ModelBuilder modelBuilder)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Microsoft.EntityFrameworkCore.ModelBuilder</span></td>
+        <td><span class="parametername">modelBuilder</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/jczarny/FlashcardsApp/new/master/apiSpec/new?filename=FlashcardsApp_FlashcardsContext.md&amp;value=---%0Auid%3A%20FlashcardsApp.FlashcardsContext%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="contribution-link">Improve this Doc</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/jczarny/FlashcardsApp/blob/master/FlashcardsApp/FlashcardsContext.cs/#L10" class="contribution-link">View Source</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+                <h5>In This Article</h5>
+                <div></div>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>
