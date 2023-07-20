@@ -40,6 +40,10 @@ Back end
 - xUnit
 - Mock
 
+Documentation
+---------------------
+Documentation may be found on my [GitHub Pages](https://jczarny.github.io/FlashcardsApp/index.html).
+
 How to run
 ---------------------
 
