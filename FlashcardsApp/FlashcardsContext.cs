@@ -13,6 +13,8 @@ namespace FlashcardsApp
         public FlashcardsContext(DbContextOptions<FlashcardsContext> options)
             : base(options)
         {
+            //this.Database.EnsureDeleted();
+            this.Database.EnsureCreated();
         }
 
         /// <summary>
@@ -21,7 +23,6 @@ namespace FlashcardsApp
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
             var users = modelBuilder.Entity<User>();
             users.Property(b => b.Username).IsRequired().HasMaxLength(25);
             users.Property(b => b.PasswordHash).IsRequired();
@@ -46,10 +47,10 @@ namespace FlashcardsApp
             decks.Property(b => b.IsPrivate).IsRequired();
             decks.HasMany(p => p.Cards).WithOne(t => t.Deck).OnDelete(DeleteBehavior.Cascade);
             decks.HasMany(p => p.UserDecks).WithOne(t => t.Deck).OnDelete(DeleteBehavior.Cascade);
-            decks.HasMany(p => p.RevisionLogs).WithOne(t => t.Deck).OnDelete(DeleteBehavior.Cascade);
+            decks.HasMany(p => p.RevisionLogs).WithOne(t => t.Deck);
 
             var cards = modelBuilder.Entity<Card>();
-            cards.HasMany(p => p.RevisionLogs).WithOne(t => t.Card).OnDelete(DeleteBehavior.Cascade);
+            cards.HasMany(p => p.RevisionLogs).WithOne(t => t.Card);
 
             var userdecks = modelBuilder.Entity<UserDeck>();
             userdecks.HasKey(b => new { b.UserId, b.DeckId });
